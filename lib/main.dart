@@ -1,16 +1,17 @@
+import 'package:dart_sip_ua_example/src/gobalinfo.dart';
 import 'package:flutter/foundation.dart'
     show debugDefaultTargetPlatformOverride;
 import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:sip_ua/sip_ua.dart';
 
-
 import 'src/about.dart';
 import 'src/callscreen.dart';
 import 'src/dialpad.dart';
 import 'src/register.dart';
 import 'src/sipphone.dart';
-
+import 'src/home.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   if (WebRTC.platformIsDesktop) {
@@ -91,6 +92,8 @@ class SplashPage extends StatelessWidget {
   }
 }
 class HomePage extends StatelessWidget {
+  TextEditingController login = TextEditingController();
+  TextEditingController password = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -100,61 +103,42 @@ class HomePage extends StatelessWidget {
       body:Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          //1Row
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              IconButton(
-                icon: Image.asset('assets/images/call.png'),
-                iconSize: 150,
-                onPressed: () {
-                  Navigator.push(context,MaterialPageRoute(builder: (context) =>sipphone()));
-                },
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+            child: TextFormField(
+              controller:login,
+              decoration: const InputDecoration(
+                prefixIcon: Icon(Icons.person),
+
+                labelText: "帳號",
+                hintText: "Your account username",
               ),
-              IconButton(
-                icon: Image.asset('assets/images/message.png'),
-                iconSize: 150,
-                onPressed: () {
-                },
-              )
-            ],
+            ),
           ),
-          //2ROW
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              IconButton(
-                icon: Image.asset('assets/images/bull.png'),
-                iconSize: 150,
-                onPressed: () {
-                },
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+            child: TextFormField(
+              obscureText: true,
+              decoration: const InputDecoration(
+                prefixIcon: Icon(Icons.person),
+
+                labelText: "密碼",
+                hintText: "Your account password",
               ),
-              IconButton(
-                icon: Image.asset('assets/images/mailbox.png'),
-                iconSize: 150,
-                onPressed: () {
-                },
-              )
-            ],
+            ),
           ),
-          //3Row
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              IconButton(
-                icon: Image.asset('assets/images/cctv.png'),
-                iconSize: 150,
-                onPressed: () {
-                },
-              ),
-              IconButton(
-                icon: Image.asset('assets/images/security.png'),
-                iconSize: 150,
-                onPressed: () {
-                },
-              )
-            ],
-          ),
+            ElevatedButton(onPressed:()async{
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              await prefs.setString("username", login.text);
+
+              Navigator.push(context,MaterialPageRoute(builder: (context) =>HomeWidget(data:{'username':login.text})));
+              gobalinfo().username=login.text;
+
+            }, child: Text('登入'))
+          ],)
         ],
       ),
 

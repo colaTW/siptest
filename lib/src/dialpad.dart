@@ -4,8 +4,10 @@ import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_ua/sip_ua.dart';
-
 import 'widgets/action_button.dart';
+import '../APIs.dart';
+
+TextEditingController DomainIP = new TextEditingController();
 
 class DialPadWidget extends StatefulWidget {
   final SIPUAHelper? _helper;
@@ -208,7 +210,14 @@ class _MyDialPadWidget extends State<DialPadWidget>
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Dart SIP UA Demo"),
+
+          title: InkWell(
+
+            child: IgnorePointer(
+                ignoring:
+                    true, // You can make this a variable in other toggle True or False
+                child: Text('Reddot sip demo')),
+          ),
           actions: <Widget>[
             PopupMenuButton<String>(
                 onSelected: (String value) {
@@ -217,7 +226,7 @@ class _MyDialPadWidget extends State<DialPadWidget>
                       Navigator.pushNamed(context, '/register');
                       break;
                     case 'about':
-                      Navigator.pushNamed(context, '/about');
+                      Navigator.pushNamed(context, '/register');
                       break;
                     default:
                       break;
@@ -321,3 +330,5 @@ class _MyDialPadWidget extends State<DialPadWidget>
   @override
   void onNewNotify(Notify ntf) {}
 }
+
+

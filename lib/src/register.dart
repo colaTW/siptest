@@ -1,6 +1,8 @@
+import 'package:dart_sip_ua_example/src/sipphone.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_ua/sip_ua.dart';
+import 'package:dart_sip_ua_example/src/sipphone.dart';
 
 class RegisterWidget extends StatefulWidget {
   final SIPUAHelper? _helper;
@@ -32,6 +34,8 @@ class _MyRegisterWidget extends State<RegisterWidget>
     _registerState = helper!.registerState;
     helper!.addSipUaHelperListener(this);
     _loadSettings();
+    //_handleSave();
+
   }
 
   @override
@@ -57,6 +61,7 @@ class _MyRegisterWidget extends State<RegisterWidget>
   }
 
   void _saveSettings() {
+    print("我存啦");
     _preferences.setString('ws_uri', _wsUriController.text);
     _preferences.setString('sip_uri', _sipUriController.text);
     _preferences.setString('display_name', _displayNameController.text);
@@ -68,6 +73,13 @@ class _MyRegisterWidget extends State<RegisterWidget>
   void registrationStateChanged(RegistrationState state) {
     setState(() {
       _registerState = state;
+      print("colahere"+EnumHelper.getName(_registerState.state));
+      /*if(EnumHelper.getName(_registerState.state)=="Registered"){
+        helper!.removeSipUaHelperListener(this);
+        _saveSettings();
+        Navigator.push(context,MaterialPageRoute(builder: (context) =>sipphone()));
+
+      }*/
     });
   }
 
@@ -92,24 +104,24 @@ class _MyRegisterWidget extends State<RegisterWidget>
     );
   }
 
-  void _handleSave(BuildContext context) {
-    if (_wsUriController.text == '') {
+  void _handleSave() {
+   /* if (_wsUriController.text == '') {
       _alert(context, "WebSocket URL");
     } else if (_sipUriController.text == '') {
       _alert(context, "SIP URI");
-    }
+    }*/
 
     UaSettings settings = UaSettings();
 
-    settings.webSocketUrl = _wsUriController.text;
+    settings.webSocketUrl = "ws://192.168.1.117:8085/ws";
     settings.webSocketSettings.extraHeaders = _wsExtraHeaders;
     settings.webSocketSettings.allowBadCertificate = true;
     //settings.webSocketSettings.userAgent = 'Dart/2.8 (dart:io) for OpenSIPS.';
 
-    settings.uri = _sipUriController.text;
-    settings.authorizationUser = _authorizationUserController.text;
-    settings.password = _passwordController.text;
-    settings.displayName = _displayNameController.text;
+    settings.uri = "0004@192.168.1.117";
+    settings.authorizationUser = "0004";
+    settings.password = "0004";
+    settings.displayName = "0004";
     settings.userAgent = 'Dart SIP Client v1.0.0';
     settings.dtmfMode = DtmfMode.RFC2833;
     print("setting:"+settings.webSocketUrl.toString());
@@ -120,6 +132,7 @@ class _MyRegisterWidget extends State<RegisterWidget>
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+
           title: Text("SIP Account"),
         ),
         body: Align(
@@ -276,10 +289,11 @@ class _MyRegisterWidget extends State<RegisterWidget>
                           ),
                           color: Colors.blue,
                           textColor: Colors.white,
-                          onPressed: () => _handleSave(context),
+                          onPressed: () => _handleSave(),
                         ),
                       ))
                 ])));
+
   }
 
   @override

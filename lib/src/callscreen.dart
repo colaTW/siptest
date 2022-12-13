@@ -565,6 +565,7 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
 
   @override
   Widget build(BuildContext context) {
+    _toggleSpeaker();
     return Scaffold(
         appBar: AppBar(
             automaticallyImplyLeading: false,

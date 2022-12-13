@@ -38,10 +38,14 @@ class HomeWidget extends StatelessWidget {
                   iconSize: 150,
                       onPressed:null
                       ),
-                  onTap: () {
+                  onTap: () async{
+                    SharedPreferences prefs = await SharedPreferences.getInstance();
+                    DomainIP.text= await prefs.getString("DomainIP")??"";
                     Navigator.push(context,MaterialPageRoute(builder: (context) =>sipphone(data:{"username":data["username"],"DomainIP":DomainIP.text})));
                   },
-                    onLongPress:(){
+                    onLongPress:() async{
+                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                      DomainIP.text= await prefs.getString("DomainIP")??"";
                       showAlertDialog(context);
                                           }
                 ),
@@ -49,6 +53,7 @@ class HomeWidget extends StatelessWidget {
                   icon: Image.asset('assets/images/message.png'),
                   iconSize: 150,
                   onPressed: () {
+
                     Navigator.push(context,MaterialPageRoute(builder: (context) =>message()));
 
                   },

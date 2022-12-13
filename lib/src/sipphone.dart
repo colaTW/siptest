@@ -59,7 +59,7 @@ class sipphone extends StatelessWidget {
     username=data["username"];
     getDomainIP=data["DomainIP"];
      UaSettings settings = UaSettings();
-    settings.webSocketUrl = "ws://"+getDomainIP+":8085/ws";
+    settings.webSocketUrl = "ws://"+getDomainIP+":8080/ws";
     //"ws://"+getDomainIP+":8080/ws";
     settings.webSocketSettings.allowBadCertificate = true;
     //settings.webSocketSettings.userAgent = 'Dart/2.8 (dart:io) for OpenSIPS.';

@@ -8,11 +8,11 @@ import 'package:sip_ua/sip_ua.dart';
 import 'message.dart';
 
 TextEditingController DomainIP = new TextEditingController();
+String username="";
 
 
 class HomeWidget extends StatelessWidget {
-  dynamic data;
-  HomeWidget({this.data});
+
   final Map<String, String> _wsExtraHeaders = {
     // 'Origin': ' https://tryit.jssip.net',
     // 'Host': 'tryit.jssip.net:10443'
@@ -41,7 +41,8 @@ class HomeWidget extends StatelessWidget {
                   onTap: () async{
                     SharedPreferences prefs = await SharedPreferences.getInstance();
                     DomainIP.text= await prefs.getString("DomainIP")??"";
-                    Navigator.push(context,MaterialPageRoute(builder: (context) =>sipphone(data:{"username":data["username"],"DomainIP":DomainIP.text})));
+                    username=await prefs.getString("username")??"";
+                    Navigator.push(context,MaterialPageRoute(builder: (context) =>sipphone(data:{"username":username,"DomainIP":DomainIP.text})));
                   },
                     onLongPress:() async{
                       SharedPreferences prefs = await SharedPreferences.getInstance();

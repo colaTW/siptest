@@ -133,9 +133,7 @@ class HomePage extends StatelessWidget {
             ElevatedButton(onPressed:()async{
               SharedPreferences prefs = await SharedPreferences.getInstance();
               await prefs.setString("username", login.text);
-
-              Navigator.push(context,MaterialPageRoute(builder: (context) =>HomeWidget(data:{'username':login.text})));
-              gobalinfo().username=login.text;
+              Navigator.push(context,MaterialPageRoute(builder: (context) =>HomeWidget()));
 
             }, child: Text('登入'))
           ],)

@@ -1,5 +1,7 @@
+import 'package:dart_sip_ua_example/src/bulletin.dart';
 import 'package:dart_sip_ua_example/src/gobalinfo.dart';
 import 'package:dart_sip_ua_example/src/home.dart';
+import 'package:dart_sip_ua_example/src/message.dart';
 import 'package:flutter/foundation.dart'
 show debugDefaultTargetPlatformOverride;
 import 'package:flutter/material.dart';
@@ -30,6 +32,12 @@ class sipphone extends StatelessWidget {
     '/callscreen': ([SIPUAHelper? helper, Object? arguments]) =>
         CallScreenWidget(helper, arguments as Call?),
     '/about': ([SIPUAHelper? helper, Object? arguments]) => AboutWidget(),
+    '/home': ([SIPUAHelper? helper, Object? arguments]) => HomeWidget(),
+    '/message': ([SIPUAHelper? helper, Object? arguments]) => message(),
+    '/bulletin': ([SIPUAHelper? helper, Object? arguments]) => bulletin(),
+
+
+
 
   };
 
@@ -83,13 +91,5 @@ class sipphone extends StatelessWidget {
 
     );
   }
-   logingsip()async{
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    getDomainIP=await prefs.getString("DomainIP")??"";
-    username=await prefs.getString("username")??"";
-    print("colahere"+getDomainIP);
-    print("colahere"+username);
 
-
-}
 }

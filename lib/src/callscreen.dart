@@ -4,7 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:sip_ua/sip_ua.dart';
-
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
+import '../notification.dart';
 import 'widgets/action_button.dart';
 
 class CallScreenWidget extends StatefulWidget {
@@ -51,6 +52,7 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
     super.initState();
     _initRenderers();
     helper!.addSipUaHelperListener(this);
+    FlutterRingtonePlayer.playRingtone();
     _startTimer();
   }
 
@@ -58,6 +60,8 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
   deactivate() {
     super.deactivate();
     helper!.removeSipUaHelperListener(this);
+    FlutterRingtonePlayer.stop();
+
     _disposeRenderers();
   }
 
@@ -129,7 +133,10 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
         _handelStreams(callState);
         break;
       case CallStateEnum.ENDED:
+        _backToDialPad();
+        break;
       case CallStateEnum.FAILED:
+        print("有結束了2");
         _backToDialPad();
         break;
       case CallStateEnum.UNMUTED:
@@ -211,6 +218,7 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
   }
 
   void _handleAccept() async {
+    FlutterRingtonePlayer.stop();
     bool remoteHasVideo = call!.remote_has_video;
     final mediaConstraints = <String, dynamic>{
       'audio': true,

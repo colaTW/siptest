@@ -1,9 +1,13 @@
+import 'package:dart_sip_ua_example/src/sipphone.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_ua/sip_ua.dart';
+import '../notification.dart';
+import 'callscreen.dart';
 import 'home.dart';
 import 'widgets/action_button.dart';
 
@@ -212,8 +216,10 @@ class _MyDialPadWidget extends State<DialPadWidget>
         appBar: AppBar(
             leading: new IconButton(
               icon: new Image.asset('assets/images/_backhome.png'),
-              onPressed: () => {
-              Navigator.push(context,MaterialPageRoute(builder: (context) =>HomeWidget()))
+              onPressed: () {
+                //Navigator.of(context, rootNavigator: true,).pop( context,);
+                Navigator.pushNamed(context, '/home');
+
               },
             ),
           title: InkWell(
@@ -221,7 +227,7 @@ class _MyDialPadWidget extends State<DialPadWidget>
             child: IgnorePointer(
                 ignoring:
                     true, // You can make this a variable in other toggle True or False
-                child: Text('Reddot sip demo')),
+                child: Text('Reddot sip')),
           ),
           actions: <Widget>[
             PopupMenuButton<String>(
@@ -319,8 +325,17 @@ class _MyDialPadWidget extends State<DialPadWidget>
   @override
   void callStateChanged(Call call, CallState callState) {
     if (callState.state == CallStateEnum.CALL_INITIATION) {
+      notification.send("re","test");
       Navigator.pushNamed(context, '/callscreen', arguments: call);
     }
+    if(callState.state == CallStateEnum.FAILED){
+      print('有結束了');
+      Navigator.of(context).pop();
+
+      FlutterRingtonePlayer.stop();
+
+    }
+
   }
 
   @override

@@ -1,4 +1,6 @@
 import 'package:dart_sip_ua_example/src/bulletin.dart';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
+import '../notification.dart';
 import 'gobalinfo.dart';
 import 'package:dart_sip_ua_example/src/register.dart';
 import 'package:dart_sip_ua_example/src/sipphone.dart';
@@ -22,6 +24,13 @@ class HomeWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+            leading: new IconButton(
+              icon: new Icon(Icons.arrow_back_ios),
+              onPressed: () {
+              Navigator.of(context, rootNavigator: true).pop();
+              },
+            ),
+
           title: Text("About"),
         ),
         body: SingleChildScrollView(
@@ -39,24 +48,20 @@ class HomeWidget extends StatelessWidget {
                       onPressed:null
                       ),
                   onTap: () async{
-                    SharedPreferences prefs = await SharedPreferences.getInstance();
+                    /*SharedPreferences prefs = await SharedPreferences.getInstance();
                     DomainIP.text= await prefs.getString("DomainIP")??"";
                     username=await prefs.getString("username")??"";
                     Navigator.push(context,MaterialPageRoute(builder: (context) =>sipphone(data:{"username":username,"DomainIP":DomainIP.text})));
+                  */
+                    Navigator.pushNamed(context, '/');
                   },
-                    onLongPress:() async{
-                      SharedPreferences prefs = await SharedPreferences.getInstance();
-                      DomainIP.text= await prefs.getString("DomainIP")??"";
-                      showAlertDialog(context);
-                                          }
+
                 ),
                 IconButton(
                   icon: Image.asset('assets/images/message.png'),
                   iconSize: 150,
                   onPressed: () {
-
-                    Navigator.push(context,MaterialPageRoute(builder: (context) =>message()));
-
+                    Navigator.pushNamed(context, '/message');
                   },
                 )
               ],
@@ -69,14 +74,15 @@ class HomeWidget extends StatelessWidget {
                   icon: Image.asset('assets/images/bull.png'),
                   iconSize: 150,
                   onPressed: () {
-                    Navigator.push(context,MaterialPageRoute(builder: (context) =>bulletin()));
-
+                    Navigator.pushNamed(context, '/bulletin');
                   },
                 ),
                 IconButton(
                   icon: Image.asset('assets/images/mailbox.png'),
                   iconSize: 150,
                   onPressed: () {
+                    notification.send("re","test");
+
                   },
                 )
               ],
@@ -89,6 +95,7 @@ class HomeWidget extends StatelessWidget {
                   icon: Image.asset('assets/images/cctv.png'),
                   iconSize: 150,
                   onPressed: () {
+
                   },
                 ),
                 IconButton(
@@ -103,38 +110,6 @@ class HomeWidget extends StatelessWidget {
         ),
         ));
   }
-  showAlertDialog(BuildContext context) {
-    // Init
 
-    AlertDialog dialog = AlertDialog(
-      title: Text("設定IP"),
-      actions: [
-        TextField(
-          controller: DomainIP,
-          keyboardType: TextInputType.text,
-          maxLines: 1,
-        ),
-        ElevatedButton(
-            child: Text("OK"),
-            onPressed: () async{
-              SharedPreferences prefs = await SharedPreferences.getInstance();
-              await prefs.setString("DomainIP", DomainIP.text);
-
-              Navigator.pop(context);
-
-            }
-        ),
-
-      ],
-    );
-
-    // Show the dialog
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return dialog;
-        }
-    );
-  }
 }
 

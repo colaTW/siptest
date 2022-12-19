@@ -12,6 +12,7 @@ import 'src/register.dart';
 import 'src/sipphone.dart';
 import 'src/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+TextEditingController DomainIP = new TextEditingController();
 
 void main() {
   if (WebRTC.platformIsDesktop) {
@@ -133,13 +134,55 @@ class HomePage extends StatelessWidget {
             ElevatedButton(onPressed:()async{
               SharedPreferences prefs = await SharedPreferences.getInstance();
               await prefs.setString("username", login.text);
-              Navigator.push(context,MaterialPageRoute(builder: (context) =>HomeWidget()));
+              DomainIP.text= await prefs.getString("DomainIP")??"";
 
-            }, child: Text('登入'))
+              Navigator.push(context,MaterialPageRoute(builder: (context) =>sipphone(data:{"username":login.text,"DomainIP":DomainIP.text})));
+
+            },
+                onLongPress: ()async{
+                  SharedPreferences prefs = await SharedPreferences.getInstance();
+                  DomainIP.text= await prefs.getString("DomainIP")??"";
+
+                  showAlertDialog(context);
+                },
+                child: Text('登入'))
           ],)
         ],
       ),
 
+    );
+  }
+  showAlertDialog(BuildContext context) {
+    // Init
+
+    AlertDialog dialog = AlertDialog(
+      title: Text("設定IP"),
+      actions: [
+        TextField(
+          controller: DomainIP,
+          keyboardType: TextInputType.text,
+          maxLines: 1,
+        ),
+        ElevatedButton(
+            child: Text("OK"),
+            onPressed: () async{
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              await prefs.setString("DomainIP", DomainIP.text);
+
+              Navigator.pop(context);
+
+            }
+        ),
+
+      ],
+    );
+
+    // Show the dialog
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return dialog;
+        }
     );
   }
 }

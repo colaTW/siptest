@@ -28,7 +28,7 @@ typedef PageContentBuilder = Widget Function(
 class MyApp extends StatelessWidget {
   final SIPUAHelper _helper = SIPUAHelper();
   Map<String, PageContentBuilder> routes = {
-    '/': ([SIPUAHelper? helper, Object? arguments]) => DialPadWidget(helper),
+    '/': ([SIPUAHelper? helper, Object? arguments]) => DialPadWidget(helper,""),
     '/register': ([SIPUAHelper? helper, Object? arguments]) =>
         RegisterWidget(helper),
     '/callscreen': ([SIPUAHelper? helper, Object? arguments]) =>
@@ -92,10 +92,32 @@ class SplashPage extends StatelessWidget {
     );
   }
 }
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return _HomePage();
+  }
+}
+class _HomePage extends State<HomePage> {
   TextEditingController login = TextEditingController();
   TextEditingController password = TextEditingController();
+  TextEditingController buildingcode = TextEditingController();
+  bool remeber=false;
   @override
+  void initState() {
+    loadlogininfo();
+    super.initState();
+
+  }
+  loadlogininfo() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String getlogin=await prefs.getString('username')??"";
+    setState(() {
+      login.text= getlogin;
+    });
+
+  }
+    @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
@@ -119,19 +141,48 @@ class HomePage extends StatelessWidget {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
             child: TextFormField(
+              controller: password,
               obscureText: true,
               decoration: const InputDecoration(
                 prefixIcon: Icon(Icons.person),
-
                 labelText: "密碼",
                 hintText: "Your account password",
               ),
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+            child: TextFormField(
+              controller: buildingcode,
+              decoration: const InputDecoration(
+                prefixIcon: Icon(Icons.person),
+                labelText: "建案代碼",
+                hintText: "Your building code",
+              ),
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+            child: CheckboxListTile(
+              title: const Text('是否記住登入資訊'),
+              value: remeber,
+              onChanged: (bool? value) {
+                setState(() {
+                  remeber = value!? true:false; // rebuilds with new value
+                });
+              },
             ),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
             ElevatedButton(onPressed:()async{
+              if(remeber){
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                await prefs.setString("username", login.text);
+                await prefs.setString("password", password.text);
+                await prefs.setBool("remeber", remeber);
+              }
               SharedPreferences prefs = await SharedPreferences.getInstance();
               await prefs.setString("username", login.text);
               DomainIP.text= await prefs.getString("DomainIP")??"";

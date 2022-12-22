@@ -1,7 +1,10 @@
 import 'package:dart_sip_ua_example/src/bulletin.dart';
+import 'package:dart_sip_ua_example/src/bulletinlist.dart';
 import 'package:dart_sip_ua_example/src/gobalinfo.dart';
 import 'package:dart_sip_ua_example/src/home.dart';
 import 'package:dart_sip_ua_example/src/message.dart';
+import 'package:dart_sip_ua_example/src/messagefix.dart';
+import 'package:dart_sip_ua_example/src/messagelist.dart';
 import 'package:flutter/foundation.dart'
 show debugDefaultTargetPlatformOverride;
 import 'package:flutter/material.dart';
@@ -26,7 +29,7 @@ class sipphone extends StatelessWidget {
   sipphone({this.data});
    SIPUAHelper _helper = SIPUAHelper();
   Map<String, PageContentBuilder> routes = {
-    '/': ([SIPUAHelper? helper, Object? arguments]) => DialPadWidget(helper),
+    '/': ([SIPUAHelper? helper, Object? arguments]) => DialPadWidget(helper,""),
     '/register': ([SIPUAHelper? helper, Object? arguments]) =>
         RegisterWidget(helper),
     '/callscreen': ([SIPUAHelper? helper, Object? arguments]) =>
@@ -34,9 +37,10 @@ class sipphone extends StatelessWidget {
     '/about': ([SIPUAHelper? helper, Object? arguments]) => AboutWidget(),
     '/home': ([SIPUAHelper? helper, Object? arguments]) => HomeWidget(),
     '/message': ([SIPUAHelper? helper, Object? arguments]) => message(),
-    '/bulletin': ([SIPUAHelper? helper, Object? arguments]) => bulletin(),
-
-
+    '/bulletin': ([SIPUAHelper? helper, Object? arguments]) => bulletinlist(),
+    '/messagefix': ([SIPUAHelper? helper, Object? arguments]) => messagefix(),
+    '/messagelist': ([SIPUAHelper? helper, Object? arguments]) => messagelist(),
+    '/security': ([SIPUAHelper? helper, Object? arguments]) => DialPadWidget(helper,"456"),
 
 
   };

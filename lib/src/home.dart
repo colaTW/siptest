@@ -8,9 +8,11 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_ua/sip_ua.dart';
 import 'message.dart';
+import 'dialpad.dart';
 
 TextEditingController DomainIP = new TextEditingController();
 String username="";
+List<bool> name = [false, false, false];
 
 
 class HomeWidget extends StatelessWidget {
@@ -48,11 +50,6 @@ class HomeWidget extends StatelessWidget {
                       onPressed:null
                       ),
                   onTap: () async{
-                    /*SharedPreferences prefs = await SharedPreferences.getInstance();
-                    DomainIP.text= await prefs.getString("DomainIP")??"";
-                    username=await prefs.getString("username")??"";
-                    Navigator.push(context,MaterialPageRoute(builder: (context) =>sipphone(data:{"username":username,"DomainIP":DomainIP.text})));
-                  */
                     Navigator.pushNamed(context, '/');
                   },
 
@@ -81,7 +78,6 @@ class HomeWidget extends StatelessWidget {
                   icon: Image.asset('assets/images/mailbox.png'),
                   iconSize: 150,
                   onPressed: () {
-                    notification.send("re","test");
 
                   },
                 )
@@ -102,6 +98,8 @@ class HomeWidget extends StatelessWidget {
                   icon: Image.asset('assets/images/security.png'),
                   iconSize: 150,
                   onPressed: () {
+                    Navigator.pushNamed(context, '/security');
+
                   },
                 )
               ],

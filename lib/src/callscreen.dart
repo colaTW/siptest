@@ -179,6 +179,7 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
 
   void _handelStreams(CallState event) async {
     MediaStream? stream = event.stream;
+    FlutterRingtonePlayer.stop();
     if (event.originator == 'local') {
       if (_localRenderer != null) {
         _localRenderer!.srcObject = stream;

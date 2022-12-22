@@ -12,10 +12,10 @@ import 'home.dart';
 import 'widgets/action_button.dart';
 
 TextEditingController DomainIP = new TextEditingController();
-
 class DialPadWidget extends StatefulWidget {
   final SIPUAHelper? _helper;
-  DialPadWidget(this._helper, {Key? key}) : super(key: key);
+  final String? get;
+  DialPadWidget(this._helper,this.get,{Key? key}) : super(key: key);
   @override
   _MyDialPadWidget createState() => _MyDialPadWidget();
 }
@@ -26,6 +26,7 @@ class _MyDialPadWidget extends State<DialPadWidget>
   SIPUAHelper? get helper => widget._helper;
   TextEditingController? _textController;
   late SharedPreferences _preferences;
+  String? get get=>widget.get;
 
   String? receivedMsg;
 
@@ -35,6 +36,11 @@ class _MyDialPadWidget extends State<DialPadWidget>
     receivedMsg = "";
     _bindEventListeners();
     _loadSettings();
+    print("這樣"+get.toString());
+    if(get!=""){
+      _textController = TextEditingController(text: get);
+      _handleCall(context);
+    }
   }
 
   void _loadSettings() async {
@@ -208,6 +214,7 @@ class _MyDialPadWidget extends State<DialPadWidget>
                 ],
               )))
     ];
+
   }
 
   @override
@@ -312,6 +319,7 @@ class _MyDialPadWidget extends State<DialPadWidget>
                     children: _buildDialPad(),
                   )),
                 ])));
+
   }
 
   @override
@@ -325,7 +333,7 @@ class _MyDialPadWidget extends State<DialPadWidget>
   @override
   void callStateChanged(Call call, CallState callState) {
     if (callState.state == CallStateEnum.CALL_INITIATION) {
-      notification.send("re","test");
+      notification.send("來電","有人想與您通話");
       Navigator.pushNamed(context, '/callscreen', arguments: call);
     }
     if(callState.state == CallStateEnum.FAILED){

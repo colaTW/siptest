@@ -1,4 +1,8 @@
+import 'dart:convert';
+
+import 'package:dart_sip_ua_example/src/APIs.dart';
 import 'package:dart_sip_ua_example/src/gobalinfo.dart';
+import 'package:dart_sip_ua_example/src/registermember.dart';
 import 'package:flutter/foundation.dart'
     show debugDefaultTargetPlatformOverride;
 import 'package:flutter/material.dart';
@@ -103,20 +107,14 @@ class _HomePage extends State<HomePage> {
   TextEditingController password = TextEditingController();
   TextEditingController buildingcode = TextEditingController();
   bool remeber=false;
+  bool isDisable=false;
   @override
   void initState() {
     loadlogininfo();
     super.initState();
 
   }
-  loadlogininfo() async{
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String getlogin=await prefs.getString('username')??"";
-    setState(() {
-      login.text= getlogin;
-    });
 
-  }
     @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -152,17 +150,6 @@ class _HomePage extends State<HomePage> {
           ),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-            child: TextFormField(
-              controller: buildingcode,
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.person),
-                labelText: "建案代碼",
-                hintText: "Your building code",
-              ),
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
             child: CheckboxListTile(
               title: const Text('是否記住登入資訊'),
               value: remeber,
@@ -176,27 +163,46 @@ class _HomePage extends State<HomePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-            ElevatedButton(onPressed:()async{
-              if(remeber){
+            ElevatedButton(onPressed:isDisable?null:()async{
+              setState(() {
+                isDisable=true;
+              });
+              String get;
+              get = await APIs().login_member(login.text,password.text); //getData()延遲執行後賦值給data
+              var info = json.decode(get);
+              if (info['code'] == 0) {
+                if(remeber){
+                  SharedPreferences prefs = await SharedPreferences.getInstance();
+                  await prefs.setString("username", login.text);
+                  await prefs.setString("password", password.text);
+                  await prefs.setBool("remeber", remeber);
+                }
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 await prefs.setString("username", login.text);
-                await prefs.setString("password", password.text);
-                await prefs.setBool("remeber", remeber);
+                DomainIP.text= await prefs.getString("DomainIP")??"";
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) =>sipphone(
+                        data: {
+                          'info': info,
+                        })));
               }
-              SharedPreferences prefs = await SharedPreferences.getInstance();
-              await prefs.setString("username", login.text);
-              DomainIP.text= await prefs.getString("DomainIP")??"";
+              else {
+                loginfailDialog(context,info['message']);
+              }
+              if(mounted){
+                setState(() {
+                  isDisable=false;
+                });
+              }
 
-              Navigator.push(context,MaterialPageRoute(builder: (context) =>sipphone(data:{"username":login.text,"DomainIP":DomainIP.text})));
 
             },
-                onLongPress: ()async{
-                  SharedPreferences prefs = await SharedPreferences.getInstance();
-                  DomainIP.text= await prefs.getString("DomainIP")??"";
 
-                  showAlertDialog(context);
-                },
-                child: Text('登入'))
+                child: Text('登入')),
+              GestureDetector(child:Text("|註冊會員",style: TextStyle(color: Colors.blue),),onTap: (){
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) =>registermember()));
+              },)
           ],)
         ],
       ),
@@ -204,8 +210,6 @@ class _HomePage extends State<HomePage> {
     );
   }
   showAlertDialog(BuildContext context) {
-    // Init
-
     AlertDialog dialog = AlertDialog(
       title: Text("設定IP"),
       actions: [
@@ -227,14 +231,51 @@ class _HomePage extends State<HomePage> {
 
       ],
     );
-
-    // Show the dialog
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return dialog;
         }
     );
+  }
+  loadlogininfo() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String getlogin=await prefs.getString('username')??"";
+    String getpassword=await prefs.getString('password')??"";
+    bool getremeber=await prefs.getBool('remeber')??false;
+
+    setState(() {
+      login.text= getlogin;
+      password.text=getpassword;
+      remeber=getremeber;
+    });
+
+  }
+  void loginfailDialog(BuildContext context,String message) {
+    showDialog(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: Text('登入失敗:'+message),
+            title: Center(
+                child: Text(
+                  '登入訊息',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold),
+                )),
+            actions: <Widget>[
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('确定')),
+
+            ],
+          );
+        });
   }
 }
 // HomePage

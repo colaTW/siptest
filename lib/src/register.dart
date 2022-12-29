@@ -49,9 +49,9 @@ class _MyRegisterWidget extends State<RegisterWidget>
     _preferences = await SharedPreferences.getInstance();
     setState(() {
       _wsUriController.text =
-          _preferences.getString('ws_uri') ?? 'wss://192.168.53.51:4443 ';
+          _preferences.getString('ws_uri') ?? 'ws://pingling.asuscomm.com:8080 ';
       _sipUriController.text =
-          _preferences.getString('sip_uri') ?? '0003@192.168.53.51';
+          _preferences.getString('sip_uri') ?? '0003@pingling.asuscomm.com';
       _displayNameController.text =
           _preferences.getString('display_name') ?? 'Flutter SIP UA';
       _passwordController.text = _preferences.getString('password') ?? '0003';

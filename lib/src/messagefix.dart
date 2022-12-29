@@ -5,9 +5,15 @@ import 'package:dart_sip_ua_example/src/sipphone.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:scan/scan.dart';
 import 'package:sip_ua/sip_ua.dart';
 
+import 'APIs.dart';
+
 class messagefix extends StatefulWidget {
+  dynamic info;
+  messagefix(this.info,{Key? key}) : super(key: key);
   @override
   State<StatefulWidget> createState() {
     return _messagefix();
@@ -23,6 +29,8 @@ class _messagefix extends State<messagefix> {
 
   @override
   Widget build(BuildContext context) {
+    print("fix"+widget.info.toString());
+
     return Scaffold(
         appBar: AppBar(
           title: Text('住戶報修'),
@@ -92,16 +100,7 @@ class _messagefix extends State<messagefix> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
               ElevatedButton(onPressed: (){
-                Fluttertoast.showToast(
-                    msg: "感謝您的建議，將改進並電話通知。",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.CENTER,
-                    timeInSecForIosWeb: 5,
-                    textColor: Colors.white,
-                    backgroundColor: Colors.black,
-                    fontSize: 16.0
-                );
-                Navigator.of(context).pop();
+                sentfix();
 
               }, child: Text("送出"))
             ],)
@@ -113,7 +112,6 @@ class _messagefix extends State<messagefix> {
         ));
   }
   _takePhoto() async {
-
       var image = await ImagePicker.pickImage(source: ImageSource.camera);
       if (image != null) {
         setState(() {
@@ -127,8 +125,8 @@ class _messagefix extends State<messagefix> {
           img1Path=base64Image;
           camera = 'assets/images/cream.png';
         });
-        /*
-        var re = json.decode(await APIs().uploadimg_project(widget.data['tk'],base64Image, filename));
+
+        var re = json.decode(await APIs().uploadimg_project(widget.info['token'],base64Image, filename));
         if (img1Path == null) {
           if (re['code'] == 0) {
             img1id = re['projectFileId'].toString();
@@ -177,8 +175,15 @@ class _messagefix extends State<messagefix> {
           setState(() {
             camera = 'assets/images/mainten_create/cream.png';
           });
-          Alert(context: context, title: "提醒", desc: "上傳以五張為限",buttons:[]).show();
-        }*/
+          Fluttertoast.showToast(
+              msg: '照片以五張為限',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              textColor: Colors.white,
+              backgroundColor: Colors.black,
+              fontSize: 16.0
+          );        }
 
     }
   }
@@ -197,8 +202,8 @@ class _messagefix extends State<messagefix> {
           img1Path=base64Image;
           upfile = 'assets/images/flieupload.png';
         });
-        /*
-        var re = json.decode(await APIs().uploadimg_project(widget.data['tk'],base64Image, filename));
+
+        var re = json.decode(await APIs().uploadimg_project(widget.info['token'],base64Image, filename));
         print(re);
         if (img1Path == null) {
           if (re['code'] == 0) {
@@ -246,12 +251,70 @@ class _messagefix extends State<messagefix> {
           }
         }
         else {
-          Alert(context: context, title: "提醒", desc: "上傳以五張為限", buttons: [])
-              .show();
+          Fluttertoast.showToast(
+              msg: '照片以5張為限',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              textColor: Colors.white,
+              backgroundColor: Colors.black,
+              fontSize: 16.0
+          );
           setState(() {
             upfile = 'assets/images/mainten_create/flieupload.png';
           });
-        }*/
+        }
     }
+  }
+  sentfix()async{
+
+      var info = Map<String, dynamic>();
+      info['projectCategoryId'] = "1";
+      info['projectItemId'] = "1";
+      info['name']="test0821";
+      info['phone']="0952689610";
+      info['mobile']="0952689610";
+      info['email']="cola556601@gmail";
+      info['address']="test" ;
+      info['building']=""  ;
+      info['household']="1";
+      info['floor']="1";
+      info['message'] = fixmessage.text.toString();
+      List<dynamic> images=[];
+      if(img1id!=null)images.add(img1id);
+      if(img2id!=null)images.add(img2id);
+      if(img3id!=null)images.add(img3id);
+      if(img4id!=null)images.add(img4id);
+      if(img5id!=null)images.add(img5id);
+      info['images'] = images;
+      info['files'] = [];
+
+
+      var end = json.decode(await APIs().menberfix(widget.info['token'], info));
+
+      if (end['code'] == 0) {
+        Alert(
+            title: '結果',
+            context: context,
+            type: AlertType.success,
+            desc: "成功",
+            buttons: [
+              DialogButton(onPressed: (){
+                Navigator.of(context, rootNavigator: true).pop();
+                Navigator.pop(context);
+
+              }, child: Text('確認'))
+            ]
+        ).show();
+      }
+      else {
+        Alert(
+            title: '失敗',
+            context: context,
+            type: AlertType.error,
+            desc: end['message'],
+
+        ).show();      }
+
   }
 }

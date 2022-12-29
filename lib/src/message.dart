@@ -5,13 +5,14 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sip_ua/sip_ua.dart';
 
 class message extends StatefulWidget {
+  dynamic info;
+  message(this.info,{Key? key}) : super(key: key);
   @override
   State<StatefulWidget> createState() {
     return _message();
   }
 }
 class _message extends State<message> {
-
   final Map<String, String> _wsExtraHeaders = {
     // 'Origin': ' https://tryit.jssip.net',
     // 'Host': 'tryit.jssip.net:10443'
@@ -20,6 +21,7 @@ class _message extends State<message> {
 
   @override
   Widget build(BuildContext context) {
+    print("取得"+widget.info.toString());
     return Scaffold(
         appBar: AppBar(
           title: Text('住戶報修/列表'),

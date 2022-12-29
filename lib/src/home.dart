@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:dart_sip_ua_example/src/bulletin.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import '../notification.dart';
+import 'APIs.dart';
 import 'gobalinfo.dart';
 import 'package:dart_sip_ua_example/src/register.dart';
 import 'package:dart_sip_ua_example/src/sipphone.dart';
@@ -9,13 +12,24 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_ua/sip_ua.dart';
 import 'message.dart';
 import 'dialpad.dart';
+import 'package:flutter_swiper/flutter_swiper.dart';
 
 TextEditingController DomainIP = new TextEditingController();
 String username="";
-List<bool> name = [false, false, false];
+List<dynamic> upimg = [];
 
+class HomeWidget extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return _HomeWidget();
+  }
+}
 
-class HomeWidget extends StatelessWidget {
+class _HomeWidget extends State<HomeWidget> {
+  @override
+  void initState() {
+    getbanner();
+  }
 
   final Map<String, String> _wsExtraHeaders = {
     // 'Origin': ' https://tryit.jssip.net',
@@ -24,7 +38,11 @@ class HomeWidget extends StatelessWidget {
   final SIPUAHelper _helper = SIPUAHelper();
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final width = size.width;
+    final height = size.height;
     return Scaffold(
+      backgroundColor: Color(0xffE6E1E0),
         appBar: AppBar(
             leading: new IconButton(
               icon: new Icon(Icons.arrow_back_ios),
@@ -32,82 +50,171 @@ class HomeWidget extends StatelessWidget {
               Navigator.of(context, rootNavigator: true).pop();
               },
             ),
+          title: Padding(
+              padding: EdgeInsets.fromLTRB(0, 30, 30, 30),
+              child:Image.asset('assets/images/logo.png',)),
+          actions: [
+            Padding(padding: EdgeInsets.fromLTRB(50, 10, 0, 10),
+           child:IconButton(
+              icon: Image.asset('assets/images/P1.png'),
+              iconSize: 150,
+              onPressed:(){
+                Navigator.pushNamed(context, '/bind');
 
-          title: Text("About"),
+              }
+          )),
+          ],
+          backgroundColor:Color(0xffE6E1E0) ,
         ),
-        body: SingleChildScrollView(
-          child:Column(
+        body:SingleChildScrollView(child:Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
+            Container(
+              color:Colors.white,
+                padding:const EdgeInsets.all(10) ,
+                width:width-10,
+                height: 250,
+                child:
+                upimg.length==0?Text(''):new Swiper(
+                  itemBuilder: (BuildContext context, int index) {
+                    return new GestureDetector(
+                      child: Image.network(upimg[index]['image'],fit:BoxFit.fitWidth,),
+                    );
+                  },
+                  itemCount: upimg.length,
+                  loop: true,
+                  autoplay: true,
+                  pagination:
+                  new SwiperPagination(alignment: Alignment.bottomCenter,margin: EdgeInsets.all(0)),
+                  control: new SwiperControl(),//如果不填則不顯示指示點 control: new SwiperControl(),//如果不填則不顯示左右按鈕 ), ),
+                )
+            ),
             //1Row
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                GestureDetector(
-                  child: IconButton(
-                  icon: Image.asset('assets/images/call.png'),
-                  iconSize: 150,
-                      onPressed:null
-                      ),
-                  onTap: () async{
-                    Navigator.pushNamed(context, '/');
-                  },
-
-                ),
-                IconButton(
-                  icon: Image.asset('assets/images/message.png'),
-                  iconSize: 150,
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/message');
-                  },
-                )
+                Expanded(
+                  child: GestureDetector(
+                    child:Image.asset('assets/images/P5.png',fit:BoxFit.cover),
+                    onTap: (){
+                      Navigator.pushNamed(context, '/');
+                    },
+                  ),),
+                Expanded(
+                  child: GestureDetector(
+                    child:Image.asset('assets/images/P6.png',fit:BoxFit.cover),
+                    onTap: (){
+                      Navigator.pushNamed(context, '/security');
+                    },
+                  ),),
+              Expanded(
+                  child: GestureDetector(
+                    child:Image.asset('assets/images/P7.png',fit:BoxFit.cover),
+                    onTap: (){
+                      Navigator.pushNamed(context, '/message');
+                    },
+                    ),),
               ],
             ),
             //2ROW
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                IconButton(
-                  icon: Image.asset('assets/images/bull.png'),
-                  iconSize: 150,
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/bulletin');
-                  },
-                ),
-                IconButton(
-                  icon: Image.asset('assets/images/mailbox.png'),
-                  iconSize: 150,
-                  onPressed: () {
+                Expanded(
+                  child: GestureDetector(
+                    child:Image.asset('assets/images/P8.png',fit:BoxFit.cover),
+                    onTap: (){
+                      Navigator.pushNamed(context, '/bulletin');
+                    },
+                  ),),
+                Expanded(
+                  child: GestureDetector(
+                    child:Image.asset('assets/images/P9.png',fit:BoxFit.cover),
+                    onTap: (){
+                    },
+                  ),),
+                Expanded(
+                  child: GestureDetector(
+                    child:Image.asset('assets/images/P10.png',fit:BoxFit.cover),
+                    onTap: (){
+                    },
+                  ),),
 
-                  },
-                )
               ],
             ),
             //3Row
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                IconButton(
-                  icon: Image.asset('assets/images/cctv.png'),
-                  iconSize: 150,
-                  onPressed: () {
+                Expanded(
+                  child: GestureDetector(
+                    child:Image.asset('assets/images/P11.png',fit:BoxFit.cover),
+                    onTap: (){
+                    },
+                  ),),
+                Expanded(
+                  child: GestureDetector(
+                    child:Image.asset('assets/images/P12.png',fit:BoxFit.cover),
+                    onTap: (){
+                    },
+                  ),),
+                Expanded(
+                  child: GestureDetector(
+                    child:Image.asset('assets/images/P13.png',fit:BoxFit.cover),
+                    onTap: (){
+                    },
+                  ),),
 
-                  },
-                ),
-                IconButton(
-                  icon: Image.asset('assets/images/security.png'),
-                  iconSize: 150,
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/security');
-
-                  },
-                )
               ],
             ),
+            Container(
+              color: Color(0xff758AFC),
+              child:
+              Row(
+                children: [
+                  Expanded(
+                    child:
+                   GestureDetector(
+                      child:
+                      Image.asset('assets/images/P14.png',),
+                      onTap: (){
+                      },
+                    ),),
+                  Image.asset('assets/images/P17.png',),
+                  Expanded(
+                    child: GestureDetector(
+                      child:Image.asset('assets/images/P15.png',),
+                      onTap: (){
+                      },
+                    ),),
+                  Image.asset('assets/images/P17.png',),
+                  Expanded(
+                    child: GestureDetector(
+                      child:Image.asset('assets/images/P16.png',),
+                      onTap: (){
+                      },
+                    ),),
+                ],
+              ),)
           ],
-        ),
-        ));
+        )),
+        );
   }
-
+getbanner() async{
+    upimg.clear();
+  var re=json.decode(await APIs().getbanner());
+  if(re['data'].length==0){
+    return;
+  }
+  for(int i=0;i<re['data'].length;i++){
+    if(re['data'][i]['area']==1){
+      if(re['data'][i]['imageUrl']==''){re['data'][i]['imageUrl']='https://baotai.com.tw/baotai/img/index1.png';}
+      setState(() {
+        upimg.add({'image':re['data'][i]['imageUrl'],'url':re['data'][i]['url']});
+      });
+    }
+  }
+  print(upimg.toString());
+}
 }
 

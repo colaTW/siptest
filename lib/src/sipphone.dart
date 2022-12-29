@@ -1,3 +1,4 @@
+import 'package:dart_sip_ua_example/src/bindcommunity.dart';
 import 'package:dart_sip_ua_example/src/bulletin.dart';
 import 'package:dart_sip_ua_example/src/bulletinlist.dart';
 import 'package:dart_sip_ua_example/src/gobalinfo.dart';
@@ -22,12 +23,24 @@ String username="";
 
 typedef PageContentBuilder = Widget Function(
     [SIPUAHelper? helper, Object? arguments]);
+dynamic getdata;
 
 // ignore: must_be_immutable
-class sipphone extends StatelessWidget {
+class sipphone extends StatefulWidget {
   dynamic data;
   sipphone({this.data});
-   SIPUAHelper _helper = SIPUAHelper();
+  @override
+  State<StatefulWidget> createState() {
+    return _sipphone();
+  }
+}
+class _sipphone extends State<sipphone> {
+
+  @override
+  void initState() {
+    getdata=widget.data;
+  }
+  SIPUAHelper _helper = SIPUAHelper();
   Map<String, PageContentBuilder> routes = {
     '/': ([SIPUAHelper? helper, Object? arguments]) => DialPadWidget(helper,""),
     '/register': ([SIPUAHelper? helper, Object? arguments]) =>
@@ -36,11 +49,12 @@ class sipphone extends StatelessWidget {
         CallScreenWidget(helper, arguments as Call?),
     '/about': ([SIPUAHelper? helper, Object? arguments]) => AboutWidget(),
     '/home': ([SIPUAHelper? helper, Object? arguments]) => HomeWidget(),
-    '/message': ([SIPUAHelper? helper, Object? arguments]) => message(),
+    '/message': ([SIPUAHelper? helper, Object? arguments]) => message(getdata['info']),
     '/bulletin': ([SIPUAHelper? helper, Object? arguments]) => bulletinlist(),
-    '/messagefix': ([SIPUAHelper? helper, Object? arguments]) => messagefix(),
-    '/messagelist': ([SIPUAHelper? helper, Object? arguments]) => messagelist(),
+    '/messagefix': ([SIPUAHelper? helper, Object? arguments]) => messagefix(getdata['info']),
+    '/messagelist': ([SIPUAHelper? helper, Object? arguments]) => messagelist(getdata['info']),
     '/security': ([SIPUAHelper? helper, Object? arguments]) => DialPadWidget(helper,"456"),
+    '/bind': ([SIPUAHelper? helper, Object? arguments]) => bindcommunity(),
 
 
   };
@@ -66,9 +80,8 @@ class sipphone extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('colahere'+data["username"]);
-    print('colahere2'+data["DomainIP"]);
-    username=data["username"];
+
+    /*username=data["username"];
     getDomainIP=data["DomainIP"];
      UaSettings settings = UaSettings();
     settings.webSocketUrl = "ws://"+getDomainIP+":8080/ws";
@@ -82,7 +95,7 @@ class sipphone extends StatelessWidget {
     settings.userAgent = 'Dart SIP Client v1.0.0';
     settings.dtmfMode = DtmfMode.RFC2833;
     print("setting:"+settings.webSocketUrl.toString());
-    _helper!.start(settings);
+    _helper!.start(settings);*/
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(

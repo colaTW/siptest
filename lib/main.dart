@@ -118,7 +118,9 @@ class _HomePage extends State<HomePage> {
     @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
+      backgroundColor:Color(0xffE6E1E0) ,
+      appBar: AppBar(
+        backgroundColor:Color(0xffE6E1E0) ,
         title: Text("首頁"),
         ),
       body:Column(

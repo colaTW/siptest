@@ -28,8 +28,7 @@ class _bindcommunity extends State<bindcommunity> {
     final width = size.width;
     final height = size.height;
     return Scaffold(
-        backgroundColor: Colors.black,
-
+        backgroundColor: Color(0xffE6E1E0),
         appBar: AppBar(
           backgroundColor: Color(0xffE6E1E0),
           title: Text('使用相機或上傳照片掃描QRcode'),

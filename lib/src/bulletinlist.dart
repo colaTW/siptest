@@ -65,8 +65,11 @@ var totalpage=3;
   Widget build(BuildContext context) {
 
     return new Scaffold(
+        backgroundColor: Color(0xffE6E1E0),
         appBar: new AppBar(
-            title: new Text("社區公告"), backgroundColor: Colors.blue),
+            title: new Text("社區公告"),
+            backgroundColor:Color(0xffE6E1E0) ,
+        ),
         body: SingleChildScrollView(
             child: new ListView.builder(
               shrinkWrap: true,
@@ -97,6 +100,8 @@ var totalpage=3;
         context: context,
         builder: (context) {
           return new AlertDialog(
+            backgroundColor: Color(0xffE6E1E0),
+
             content: Container(
                 width: width,
                 height:height ,

@@ -33,9 +33,13 @@ class _registermember extends State<registermember> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
+      backgroundColor: Color(0xffE6E1E0),
+
+      appBar: AppBar(
           title: Text('會員註冊'),
-        ),
+        backgroundColor:Color(0xffE6E1E0) ,
+
+      ),
         body: SingleChildScrollView(
           child: Column(
             children: <Widget>[

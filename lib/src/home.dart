@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dart_sip_ua_example/src/bulletin.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../notification.dart';
 import 'APIs.dart';
 import 'gobalinfo.dart';
@@ -44,6 +45,9 @@ class _HomeWidget extends State<HomeWidget> {
     return Scaffold(
       backgroundColor: Color(0xffE6E1E0),
         appBar: AppBar(
+          leadingWidth: 20, //<-- Use this
+
+          centerTitle: false,
             leading: new IconButton(
               icon: new Icon(Icons.arrow_back_ios),
               onPressed: () {
@@ -51,7 +55,7 @@ class _HomeWidget extends State<HomeWidget> {
               },
             ),
           title: Padding(
-              padding: EdgeInsets.fromLTRB(0, 30, 30, 30),
+              padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
               child:Image.asset('assets/images/logo.png',)),
           actions: [
             Padding(padding: EdgeInsets.fromLTRB(50, 10, 0, 10),
@@ -66,7 +70,7 @@ class _HomeWidget extends State<HomeWidget> {
           ],
           backgroundColor:Color(0xffE6E1E0) ,
         ),
-        body:SingleChildScrollView(child:Column(
+        body:Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Container(
@@ -90,44 +94,51 @@ class _HomeWidget extends State<HomeWidget> {
                 )
             ),
             //1Row
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Expanded(
-                  child: GestureDetector(
-                    child:Image.asset('assets/images/P5.png',fit:BoxFit.cover),
-                    onTap: (){
-                      Navigator.pushNamed(context, '/');
-                    },
-                  ),),
-                Expanded(
-                  child: GestureDetector(
-                    child:Image.asset('assets/images/P6.png',fit:BoxFit.cover),
-                    onTap: (){
-                      Navigator.pushNamed(context, '/security');
-                    },
-                  ),),
-              Expanded(
-                  child: GestureDetector(
-                    child:Image.asset('assets/images/P7.png',fit:BoxFit.cover),
-                    onTap: (){
-                      Navigator.pushNamed(context, '/message');
-                    },
-                    ),),
-              ],
-            ),
-            //2ROW
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Expanded(
-                  child: GestureDetector(
-                    child:Image.asset('assets/images/P8.png',fit:BoxFit.cover),
-                    onTap: (){
-                      Navigator.pushNamed(context, '/bulletin');
-                    },
-                  ),),
-                Expanded(
+            Container(
+              height: height/2,
+                child:SingleChildScrollView(
+          child:Column(children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Expanded(
+              child: GestureDetector(
+                child:Image.asset('assets/images/P5.png',fit:BoxFit.cover),
+                onTap: (){
+                  Navigator.pushNamed(context, '/');
+                },
+              ),),
+            Expanded(
+              child: GestureDetector(
+                child:Image.asset('assets/images/P6.png',fit:BoxFit.cover),
+                onTap: (){
+                  Navigator.pushNamed(context, '/security');
+                },
+              ),),
+            Expanded(
+              child: GestureDetector(
+                child:Image.asset('assets/images/P7.png',fit:BoxFit.cover),
+                onTap: (){
+                  Navigator.pushNamed(context, '/message');
+                },
+              ),),
+          ],
+        ),
+        //2ROW
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Expanded(
+              child: GestureDetector(
+                child:Image.asset('assets/images/P8.png',fit:BoxFit.cover),
+                onTap: (){
+                  Navigator.pushNamed(context, '/bulletin');
+                },
+              ),),
+            SizedBox(width: width/3,),
+            SizedBox(width: width/3,),
+
+            /*Expanded(
                   child: GestureDetector(
                     child:Image.asset('assets/images/P9.png',fit:BoxFit.cover),
                     onTap: (){
@@ -138,12 +149,12 @@ class _HomeWidget extends State<HomeWidget> {
                     child:Image.asset('assets/images/P10.png',fit:BoxFit.cover),
                     onTap: (){
                     },
-                  ),),
+                  ),),*/
 
-              ],
-            ),
-            //3Row
-            Row(
+          ],
+        ),
+        //3Row
+        /*  Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Expanded(
@@ -166,11 +177,18 @@ class _HomeWidget extends State<HomeWidget> {
                   ),),
 
               ],
-            ),
+            ),*/
+
+
+      ],))),
+
             Container(
+              padding: EdgeInsets.all(8.0),
               color: Color(0xff758AFC),
               child:
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+
                 children: [
                   Expanded(
                     child:
@@ -185,6 +203,8 @@ class _HomeWidget extends State<HomeWidget> {
                     child: GestureDetector(
                       child:Image.asset('assets/images/P15.png',),
                       onTap: (){
+                        _launchInBrowser(Uri.parse("http://www.reddotsolution.com/home/index-5.html"));
+
                       },
                     ),),
                   Image.asset('assets/images/P17.png',),
@@ -192,12 +212,13 @@ class _HomeWidget extends State<HomeWidget> {
                     child: GestureDetector(
                       child:Image.asset('assets/images/P16.png',),
                       onTap: (){
+                        _launchInBrowser(Uri.parse("http://www.reddotsolution.com/home/index-5.html"));
                       },
                     ),),
                 ],
               ),)
           ],
-        )),
+        ),
         );
   }
 getbanner() async{
@@ -216,5 +237,13 @@ getbanner() async{
   }
   print(upimg.toString());
 }
+  Future<void> _launchInBrowser(Uri url) async {
+    if (!await launchUrl(
+      url,
+      mode: LaunchMode.externalApplication,
+    )) {
+      throw 'Could not launch $url';
+    }
+  }
 }
 

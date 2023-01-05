@@ -64,8 +64,11 @@ var totalpage=3;
   Widget build(BuildContext context) {
 
     return new Scaffold(
+        backgroundColor: Color(0xffE6E1E0),
         appBar: new AppBar(
-            title: new Text("社區公告"), backgroundColor: Colors.blue),
+            title: new Text("社區公告"),
+            backgroundColor:Color(0xffE6E1E0) ,),
+
         body: SingleChildScrollView(
             child:
             Column(

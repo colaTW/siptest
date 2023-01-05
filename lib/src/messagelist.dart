@@ -200,13 +200,13 @@ class _messagelist extends State<messagelist>{
     final height = size.height;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFF445154),
+        backgroundColor: Color(0xffE6E1E0),
         title: Text("維修列表"),
       ),
       body:
       Container(
         height: height+1,
-        color: Color(0xFF2A3233),
+        color:Color(0xffE6E1E0) ,
         child:Column(
           children: [
             SizedBox(height: 10,),

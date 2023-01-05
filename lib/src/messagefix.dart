@@ -32,8 +32,12 @@ class _messagefix extends State<messagefix> {
     print("fix"+widget.info.toString());
 
     return Scaffold(
+        backgroundColor: Color(0xffE6E1E0),
+
         appBar: AppBar(
           title: Text('住戶報修'),
+          backgroundColor:Color(0xffE6E1E0) ,
+
         ),
         body: SingleChildScrollView(
           child:Column(
@@ -51,8 +55,6 @@ class _messagefix extends State<messagefix> {
                 minLines: 10,
                 maxLines: 15,
                 decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.message),
-                  labelText: "報修詳細描述",
                   hintText: "ex:浴室水龍頭漏水",
                 ),
               ),

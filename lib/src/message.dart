@@ -23,9 +23,12 @@ class _message extends State<message> {
   Widget build(BuildContext context) {
     print("取得"+widget.info.toString());
     return Scaffold(
-        appBar: AppBar(
+      backgroundColor: Color(0xffE6E1E0),
+      appBar: AppBar(
           title: Text('住戶報修/列表'),
-        ),
+        backgroundColor:Color(0xffE6E1E0) ,
+
+      ),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

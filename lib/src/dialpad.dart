@@ -4,12 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_ua/sip_ua.dart';
 import '../notification.dart';
 import 'callscreen.dart';
 import 'home.dart';
+import 'firebasemessage.dart';
 import 'widgets/action_button.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_core/firebase_core.dart';
+
 
 TextEditingController DomainIP = new TextEditingController();
 class DialPadWidget extends StatefulWidget {
@@ -27,8 +32,10 @@ class _MyDialPadWidget extends State<DialPadWidget>
   TextEditingController? _textController;
   late SharedPreferences _preferences;
   String? get get=>widget.get;
-
   String? receivedMsg;
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  String notify_token="";
+  final List<Message1> messages = [];
 
   @override
   initState() {
@@ -41,6 +48,58 @@ class _MyDialPadWidget extends State<DialPadWidget>
       _textController = TextEditingController(text: get);
       _handleCall(context);
     }
+    _firebaseMessaging.subscribeToTopic('all');
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      RemoteNotification  notification = message.notification as RemoteNotification ;
+      Map<String, dynamic> params = message.data;
+      print("mm"+message.toString());
+      print("params"+params.toString());
+      if(params['type']=="pickUp"){
+        UaSettings settings = UaSettings();
+        settings.webSocketUrl = "ws://ip-intercom.reddotsolution.com:8080/ws";
+        settings.webSocketSettings.allowBadCertificate = true;
+        //settings.webSocketSettings.userAgent = 'Dart/2.8 (dart:io) for OpenSIPS.';
+        settings.uri = params['sipName']+"@ip-intercom.reddotsolution.com";
+        settings.authorizationUser =params['sipName'] ;
+        settings.password =params['sipPassword'];
+        settings.displayName =params['sipName'];
+        settings.userAgent = 'Dart SIP Client v1.0.0';
+        settings.dtmfMode = DtmfMode.RFC2833;
+        print("setting:"+settings.webSocketUrl.toString());
+        helper!.start(settings);
+      }
+      else if(params['type']=="call"){
+        Navigator.of(context, rootNavigator: true).pop();
+        _handleCall(context);
+      }
+
+     /*UaSettings settings = UaSettings();
+    settings.webSocketUrl = "ws://pingling.asuscomm.com:8080/ws";
+    settings.webSocketSettings.allowBadCertificate = true;
+    //settings.webSocketSettings.userAgent = 'Dart/2.8 (dart:io) for OpenSIPS.';
+    settings.uri = "0003@pingling.asuscomm.com";
+    settings.authorizationUser ="0003" ;
+    settings.password ="0003" ;
+    settings.displayName ="0003";
+    settings.userAgent = 'Dart SIP Client v1.0.0';
+    settings.dtmfMode = DtmfMode.RFC2833;
+    print("setting:"+settings.webSocketUrl.toString());
+    helper!.start(settings);*/
+    });
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async{
+      print("onMessageOpenedApp: $message");
+
+    });
+
+    _firebaseMessaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
   }
 
   void _loadSettings() async {
@@ -48,7 +107,6 @@ class _MyDialPadWidget extends State<DialPadWidget>
     _dest = _preferences.getString('dest') ?? '';
     _textController = TextEditingController(text: _dest);
     _textController!.text = _dest!;
-
     setState(() {});
   }
 
@@ -199,7 +257,10 @@ class _MyDialPadWidget extends State<DialPadWidget>
                 children: <Widget>[
                   ActionButton(
                     icon: Icons.videocam,
-                    onPressed: () => _handleCall(context),
+                    onPressed: () async{
+                     callingDialog();
+                     // _handleCall(context);
+                       }
                   ),
                   ActionButton(
                     icon: Icons.dialer_sip,
@@ -220,8 +281,10 @@ class _MyDialPadWidget extends State<DialPadWidget>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor:Color(0xffE6E1E0) ,
         appBar: AppBar(
-            leading: new IconButton(
+          backgroundColor:Color(0xffE6E1E0) ,
+          leading: new IconButton(
               icon: new Image.asset('assets/images/_backhome.png'),
               onPressed: () {
                 //Navigator.of(context, rootNavigator: true,).pop( context,);
@@ -336,10 +399,10 @@ class _MyDialPadWidget extends State<DialPadWidget>
       notification.send("來電","有人想與您通話");
       Navigator.pushNamed(context, '/callscreen', arguments: call);
     }
+
     if(callState.state == CallStateEnum.FAILED){
       print('有結束了');
       Navigator.of(context).pop();
-
       FlutterRingtonePlayer.stop();
 
     }
@@ -357,6 +420,37 @@ class _MyDialPadWidget extends State<DialPadWidget>
 
   @override
   void onNewNotify(Notify ntf) {}
+  void callingDialog() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return StatefulBuilder(builder: (context, StateSetter setState2) {
+            final size = MediaQuery.of(context).size;
+            final width = size.width;
+            final height = size.height;
+            return
+              Scaffold(
+                appBar: new AppBar(
+                    automaticallyImplyLeading: false,
+                    title: new Text("撥號中..."), backgroundColor: Colors.blue),
+                body:
+                    Container (
+                      width: width,
+                      height: height,
+                      child:
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                          Text('撥號中...'),
+                          Image.asset('assets/images/calling.gif')
+                        ],)
+                     )
+
+              );
+
+          });
+        });
+  }
 }
 
 

@@ -113,15 +113,15 @@ class _MyRegisterWidget extends State<RegisterWidget>
 
     UaSettings settings = UaSettings();
 
-    settings.webSocketUrl = "ws://192.168.1.117:8085/ws";
+    settings.webSocketUrl = "ws://pingling.asuscomm.com:8080";
     settings.webSocketSettings.extraHeaders = _wsExtraHeaders;
     settings.webSocketSettings.allowBadCertificate = true;
     //settings.webSocketSettings.userAgent = 'Dart/2.8 (dart:io) for OpenSIPS.';
 
-    settings.uri = "0004@192.168.1.117";
-    settings.authorizationUser = "0004";
-    settings.password = "0004";
-    settings.displayName = "0004";
+    settings.uri = "0001@pingling.asuscomm.com";
+    settings.authorizationUser = "0001";
+    settings.password = "0001";
+    settings.displayName = "0001";
     settings.userAgent = 'Dart SIP Client v1.0.0';
     settings.dtmfMode = DtmfMode.RFC2833;
     print("setting:"+settings.webSocketUrl.toString());

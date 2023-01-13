@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dart_sip_ua_example/src/APIs.dart';
 import 'package:dart_sip_ua_example/src/gobalinfo.dart';
 import 'package:dart_sip_ua_example/src/registermember.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart'
     show debugDefaultTargetPlatformOverride;
 import 'package:flutter/material.dart';
@@ -18,10 +19,12 @@ import 'src/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 TextEditingController DomainIP = new TextEditingController();
 
-void main() {
+void main() async{
   if (WebRTC.platformIsDesktop) {
     debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
   }
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
@@ -179,13 +182,13 @@ class _HomePage extends State<HomePage> {
                   await prefs.setString("password", password.text);
                   await prefs.setBool("remeber", remeber);
                 }
-                SharedPreferences prefs = await SharedPreferences.getInstance();
-                await prefs.setString("username", login.text);
-                DomainIP.text= await prefs.getString("DomainIP")??"";
+                get =await APIs().getmemberprofile(info['token']);
+                var profile=json.decode(get);
+
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) =>sipphone(
                         data: {
-                          'info': info,
+                          'info': info,'profile':profile
                         })));
               }
               else {
@@ -196,10 +199,7 @@ class _HomePage extends State<HomePage> {
                   isDisable=false;
                 });
               }
-
-
             },
-
                 child: Text('登入')),
               GestureDetector(child:Text("|註冊會員",style: TextStyle(color: Colors.blue),),onTap: (){
                 Navigator.push(context,
@@ -209,35 +209,6 @@ class _HomePage extends State<HomePage> {
         ],
       ),
 
-    );
-  }
-  showAlertDialog(BuildContext context) {
-    AlertDialog dialog = AlertDialog(
-      title: Text("設定IP"),
-      actions: [
-        TextField(
-          controller: DomainIP,
-          keyboardType: TextInputType.text,
-          maxLines: 1,
-        ),
-        ElevatedButton(
-            child: Text("OK"),
-            onPressed: () async{
-              SharedPreferences prefs = await SharedPreferences.getInstance();
-              await prefs.setString("DomainIP", DomainIP.text);
-
-              Navigator.pop(context);
-
-            }
-        ),
-
-      ],
-    );
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return dialog;
-        }
     );
   }
   loadlogininfo() async{

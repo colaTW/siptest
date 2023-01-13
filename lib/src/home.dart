@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dart_sip_ua_example/src/bulletin.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../notification.dart';
 import 'APIs.dart';
@@ -20,6 +21,8 @@ String username="";
 List<dynamic> upimg = [];
 
 class HomeWidget extends StatefulWidget {
+  dynamic isBind;
+  HomeWidget(this.isBind,{Key? key}) : super(key: key);
   @override
   State<StatefulWidget> createState() {
     return _HomeWidget();
@@ -105,6 +108,18 @@ class _HomeWidget extends State<HomeWidget> {
               child: GestureDetector(
                 child:Image.asset('assets/images/P5.png',fit:BoxFit.cover),
                 onTap: (){
+                  if(!widget.isBind){
+                    Fluttertoast.showToast(
+                        msg: "請先綁定你所屬住戶方可使用",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.CENTER,
+                        timeInSecForIosWeb: 1,
+                        textColor: Colors.white,
+                        backgroundColor: Colors.black,
+                        fontSize: 16.0
+                    );
+                    return;
+                  }
                   Navigator.pushNamed(context, '/');
                 },
               ),),
@@ -112,6 +127,18 @@ class _HomeWidget extends State<HomeWidget> {
               child: GestureDetector(
                 child:Image.asset('assets/images/P6.png',fit:BoxFit.cover),
                 onTap: (){
+                  if(!widget.isBind){
+                    Fluttertoast.showToast(
+                        msg: "請先綁定你所屬住戶方可使用",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.CENTER,
+                        timeInSecForIosWeb: 1,
+                        textColor: Colors.white,
+                        backgroundColor: Colors.black,
+                        fontSize: 16.0
+                    );
+                    return;
+                  }
                   Navigator.pushNamed(context, '/security');
                 },
               ),),
@@ -119,6 +146,18 @@ class _HomeWidget extends State<HomeWidget> {
               child: GestureDetector(
                 child:Image.asset('assets/images/P7.png',fit:BoxFit.cover),
                 onTap: (){
+                  if(!widget.isBind){
+                    Fluttertoast.showToast(
+                        msg: "請先綁定你所屬住戶方可使用",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.CENTER,
+                        timeInSecForIosWeb: 1,
+                        textColor: Colors.white,
+                        backgroundColor: Colors.black,
+                        fontSize: 16.0
+                    );
+                    return;
+                  }
                   Navigator.pushNamed(context, '/message');
                 },
               ),),
@@ -132,6 +171,18 @@ class _HomeWidget extends State<HomeWidget> {
               child: GestureDetector(
                 child:Image.asset('assets/images/P8.png',fit:BoxFit.cover),
                 onTap: (){
+                  if(!widget.isBind){
+                    Fluttertoast.showToast(
+                        msg: "請先綁定你所屬住戶方可使用",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.CENTER,
+                        timeInSecForIosWeb: 1,
+                        textColor: Colors.white,
+                        backgroundColor: Colors.black,
+                        fontSize: 16.0
+                    );
+                    return;
+                  }
                   Navigator.pushNamed(context, '/bulletin');
                 },
               ),),

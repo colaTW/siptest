@@ -19,7 +19,7 @@ import 'dialpad.dart';
 import 'register.dart';
 String getDomainIP="";
 String username="";
-
+bool isBind=false;
 
 typedef PageContentBuilder = Widget Function(
     [SIPUAHelper? helper, Object? arguments]);
@@ -35,10 +35,12 @@ class sipphone extends StatefulWidget {
   }
 }
 class _sipphone extends State<sipphone> {
+  String gowhere="/home";
 
   @override
   void initState() {
     getdata=widget.data;
+
   }
   SIPUAHelper _helper = SIPUAHelper();
   Map<String, PageContentBuilder> routes = {
@@ -48,13 +50,13 @@ class _sipphone extends State<sipphone> {
     '/callscreen': ([SIPUAHelper? helper, Object? arguments]) =>
         CallScreenWidget(helper, arguments as Call?),
     '/about': ([SIPUAHelper? helper, Object? arguments]) => AboutWidget(),
-    '/home': ([SIPUAHelper? helper, Object? arguments]) => HomeWidget(),
+    '/home': ([SIPUAHelper? helper, Object? arguments]) => HomeWidget(isBind),
     '/message': ([SIPUAHelper? helper, Object? arguments]) => message(getdata['info']),
     '/bulletin': ([SIPUAHelper? helper, Object? arguments]) => bulletinlist(),
     '/messagefix': ([SIPUAHelper? helper, Object? arguments]) => messagefix(getdata['info']),
     '/messagelist': ([SIPUAHelper? helper, Object? arguments]) => messagelist(getdata['info']),
     '/security': ([SIPUAHelper? helper, Object? arguments]) => DialPadWidget(helper,"456"),
-    '/bind': ([SIPUAHelper? helper, Object? arguments]) => bindcommunity(),
+    '/bind': ([SIPUAHelper? helper, Object? arguments]) => bindcommunity(getdata['info']),
 
 
   };
@@ -80,18 +82,22 @@ class _sipphone extends State<sipphone> {
 
   @override
   Widget build(BuildContext context) {
+    if(getdata['profile']['houses'].length>0){
+      isBind=true;
+      gowhere="/";
+    }
+    else{
+      isBind=false;
+    }
 
-    /*username=data["username"];
-    getDomainIP=data["DomainIP"];
-     UaSettings settings = UaSettings();
-    settings.webSocketUrl = "ws://"+getDomainIP+":8080/ws";
-    //"ws://"+getDomainIP+":8080/ws";
+    /*UaSettings settings = UaSettings();
+    settings.webSocketUrl = "ws://pingling.asuscomm.com:8080/ws";
     settings.webSocketSettings.allowBadCertificate = true;
     //settings.webSocketSettings.userAgent = 'Dart/2.8 (dart:io) for OpenSIPS.';
-    settings.uri = username+"@"+getDomainIP;
-    settings.authorizationUser =username ;
-    settings.password =username ;
-    settings.displayName =username;
+    settings.uri = "0002@pingling.asuscomm.com";
+    settings.authorizationUser ="0002" ;
+    settings.password ="0002";
+    settings.displayName ="0002";
     settings.userAgent = 'Dart SIP Client v1.0.0';
     settings.dtmfMode = DtmfMode.RFC2833;
     print("setting:"+settings.webSocketUrl.toString());
@@ -102,7 +108,7 @@ class _sipphone extends State<sipphone> {
         primarySwatch: Colors.blue,
         fontFamily: 'Roboto',
       ),
-      initialRoute: '/',
+      initialRoute: gowhere,
       onGenerateRoute: _onGenerateRoute,
 
 

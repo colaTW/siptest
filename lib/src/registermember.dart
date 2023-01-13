@@ -1,5 +1,6 @@
 import 'package:dart_sip_ua_example/src/register.dart';
 import 'package:dart_sip_ua_example/src/sipphone.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sip_ua/sip_ua.dart';
@@ -30,6 +31,18 @@ class _registermember extends State<registermember> {
   TextEditingController mail = TextEditingController();
   TextEditingController phone = TextEditingController();
   var buildID="1";
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  var notify_token="";
+  @override
+  initState() {
+    super.initState();
+    _firebaseMessaging.getToken().then((token){
+      notify_token=token.toString();
+      print("token"+token.toString());});
+    _firebaseMessaging.subscribeToTopic('all');
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -123,7 +136,7 @@ class _registermember extends State<registermember> {
                   onPressed: isDisable?null:()
                   async{
                       String get;
-                      get = await APIs().register_member(buildID,name.text,account.text,password.text,checkpassword.text,phone.text,mail.text); //getData()延遲執行後賦值給data
+                      get = await APIs().register_member(buildID,name.text,account.text,password.text,checkpassword.text,phone.text,mail.text,notify_token); //getData()延遲執行後賦值給data
                       var info = json.decode(get);
                       if(info['code']!=0){
                         Fluttertoast.showToast(

@@ -134,7 +134,7 @@ class _messagefix extends State<messagefix> {
             img1id = re['projectFileId'].toString();
             setState(() {
               img1Path = re['projectFileUrl'];
-              camera = 'assets/images/mainten_create/cream.png';
+              camera = 'assets/images/cream.png';
             });
           }
         }
@@ -143,7 +143,7 @@ class _messagefix extends State<messagefix> {
             img2id = re['projectFileId'].toString();
             setState(() {
               img2Path = re['projectFileUrl'];
-              camera = 'assets/images/mainten_create/cream.png';
+              camera = 'assets/images/cream.png';
             });
           }
         }
@@ -152,7 +152,7 @@ class _messagefix extends State<messagefix> {
             img3id = re['projectFileId'].toString();
             setState(() {
               img3Path = re['projectFileUrl'];
-              camera = 'assets/images/mainten_create/cream.png';
+              camera = 'assets/images/cream.png';
             });
           }
         }
@@ -161,7 +161,7 @@ class _messagefix extends State<messagefix> {
             img4id = re['projectFileId'].toString();
             setState(() {
               img4Path = re['projectFileUrl'];
-              camera = 'assets/images/mainten_create/cream.png';
+              camera = 'assets/images/cream.png';
             });
           }
         } else if (img5Path == null) {
@@ -169,13 +169,13 @@ class _messagefix extends State<messagefix> {
             img5id = re['projectFileId'].toString();
             setState(() {
               img5Path = re['projectFileUrl'];
-              camera = 'assets/images/mainten_create/cream.png';
+              camera = 'assets/images/cream.png';
             });
           }
         }
         else {
           setState(() {
-            camera = 'assets/images/mainten_create/cream.png';
+            camera = 'assets/images/cream.png';
           });
           Fluttertoast.showToast(
               msg: '照片以五張為限',
@@ -212,7 +212,7 @@ class _messagefix extends State<messagefix> {
             img1id = re['projectFileId'].toString();
             setState(() {
               img1Path = re['projectFileUrl'];
-              upfile = 'assets/images/mainten_create/flieupload.png';
+              upfile = 'assets/images/flieupload.png';
             });
           }
         }
@@ -221,7 +221,7 @@ class _messagefix extends State<messagefix> {
             img2id = re['projectFileId'].toString();
             setState(() {
               img2Path = re['projectFileUrl'];
-              upfile = 'assets/images/mainten_create/flieupload.png';
+              upfile = 'assets/images/flieupload.png';
             });
           }
         }
@@ -230,7 +230,7 @@ class _messagefix extends State<messagefix> {
             img3id = re['projectFileId'].toString();
             setState(() {
               img3Path = re['projectFileUrl'];
-              upfile = 'assets/images/mainten_create/flieupload.png';
+              upfile = 'assets/images/flieupload.png';
             });
           }
         }
@@ -239,7 +239,7 @@ class _messagefix extends State<messagefix> {
             img4id = re['projectFileId'].toString();
             setState(() {
               img4Path = re['projectFileUrl'];
-              upfile = 'assets/images/mainten_create/flieupload.png';
+              upfile = 'assets/images/flieupload.png';
             });
           }
         }
@@ -248,7 +248,7 @@ class _messagefix extends State<messagefix> {
             img5id = re['projectFileId'].toString();
             setState(() {
               img5Path = re['projectFileUrl'];
-              upfile = 'assets/images/mainten_create/flieupload.png';
+              upfile = 'assets/images/flieupload.png';
             });
           }
         }
@@ -263,7 +263,7 @@ class _messagefix extends State<messagefix> {
               fontSize: 16.0
           );
           setState(() {
-            upfile = 'assets/images/mainten_create/flieupload.png';
+            upfile ='assets/images/flieupload.png';
           });
         }
     }

@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class APIs {
-  var url = 'rsd.edwardforce.tw';
+  var url = 'community.edwardforce.tw';
 
 
   getbanner()async{
@@ -64,17 +64,17 @@ class APIs {
     print(response.body);
     return (response.body);
   }
-  register_member(String constructionId,String name,String account,String password,String confirmPassword,String mobile,String email) async{
+  register_member(String constructionId,String name,String account,String password,String confirmPassword,String mobile,String email,String mobileNotifyToken) async{
     var params = Map<String, String>();
     var header = Map<String, String>();
     header["Content-Type"]="application/json";
-    params["constructionId"] = constructionId;
     params["name"] = name;
     params["account"] = account;
     params["password"] = password;
     params["confirmPassword"] = confirmPassword;
     params["mobile"] = mobile;
     params["email"] = email;
+    params["mobileNotifyToken"]=mobileNotifyToken;
     var body=json.encode(params);
     var client = http.Client();
     var uri = Uri.https(url,'/api/member/user/register');
@@ -106,6 +106,28 @@ class APIs {
     var uri = Uri.https(url,'/api/member/project/one');
     var response = await client.post(uri,body:body,headers:params);
     print("here"+response.body);
+    return (response.body);
+  }
+  bindcommunity(var tk,var houseID) async{
+    var params = Map<String, String>();
+    params["Authorization"] = ":Bearer "+tk;
+    var body= Map<String, String>();
+    body['hourseId']=houseID.toString();
+    var client = http.Client();
+    print(body);
+    var uri = Uri.https(url,'/api/member/user/bind/house');
+    var response = await client.post(uri,body:body,headers:params);
+    print("here"+response.body);
+    return (response.body);
+  }
+  getmemberprofile(var tk) async{
+    var params = Map<String, String>();
+    params["Authorization"] = ":Bearer "+tk;
+    params["Content-Type"]="application/json";
+    var uri = Uri.https(url,'/api/member/user/profile');
+    var client = http.Client();
+    var response = await client.get(uri,headers:params);
+    // print(response.body);
     return (response.body);
   }
 }

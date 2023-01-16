@@ -67,8 +67,7 @@ class _messagelist extends State<messagelist>{
         goinfo.deal_type_newdate = re['projectLists'][i]['projectItemName'] +
             re['projectLists'][i]['projectCategoryName'] + '\n' +
             re['projectLists'][i]['createdAt'];
-        goinfo.deal_info_case = re['projectLists'][i]['member']['name'] + '\n' +
-            re['projectLists'][i]['constructionName'];
+        goinfo.deal_info_case = re['projectLists'][i]['createMember']['name'] ;
         goinfo.deal_phone = re['projectLists'][i]['repair']['mobile'];
         goinfo.deal_status = re['projectLists'][i]['handlerType'];
         goinfo.deal_name = re['projectLists'][i]['repair']['name'];

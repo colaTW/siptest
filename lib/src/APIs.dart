@@ -153,7 +153,16 @@ class APIs {
     // print(response.body);
     return (response.body);
   }
-
+  getcategorylist(var tk) async {
+    var params = Map<String, String>();
+    params["Authorization"] = ":Bearer " + tk;
+    params["Content-Type"] = "application/json";
+    var uri = Uri.https(url, '/app/api/member/project/category/item/options');
+    var client = http.Client();
+    var response = await client.get(uri, headers: params);
+    // print(response.body);
+    return (response.body);
+  }
   startcall(var tk, var targetConstructionId, var targetHourseName) async {
     var params = Map<String, String>();
     params["Authorization"] = ":Bearer " + tk;

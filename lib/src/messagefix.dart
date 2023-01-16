@@ -23,10 +23,26 @@ class _messagefix extends State<messagefix> {
   var img1Path,img2Path,img3Path,img4Path,img5Path;
   var img1id,img2id,img3id,img4id,img5id;
   var residentID;
+  var Category;
+  var Categories=null;
+  var itemslist=null;
+  var buildID;
+  var file1_id;
+  var buildInfo;
+  var Itmes;
+  var myhouses=null;
+  var chiocehouse;
+  var constructionId;
+  var profile;
   String camera='assets/images/cream.png';
   String upfile='assets/images/flieupload.png';
   TextEditingController fixmessage = new TextEditingController();
+  void initState() {
+    this.getcategory();
+    this.getmemberprofile();
+    print("list"+widget.info.toString());
 
+  }
   @override
   Widget build(BuildContext context) {
     print("fix"+widget.info.toString());
@@ -43,11 +59,84 @@ class _messagefix extends State<messagefix> {
           child:Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-              child: Text("報修事項: 維修"),
-            ),
+            myhouses!=null?Row(children: [
+              Text("報修住戶:"),
+              new Expanded(child:
+              new Container(color:Colors.white,
+                child:new DropdownButtonHideUnderline(child:
+                new DropdownButton<dynamic>(
+                  isExpanded: true,
+                  hint:Center(child: Text('－－請選擇住戶－－',textAlign: TextAlign.center)),
+                  items:myhouses.skip(1).map<DropdownMenuItem<dynamic>>((item) {
+                    return new DropdownMenuItem<dynamic>(
+                      child: Center(child:new Text(item['constructionName']+item['houseName'])),
+                      value: item,
+                    );
+                  }).toList(),
+                  onChanged: (selectvalue) {
+                    setState(() {
+                      chiocehouse=selectvalue;
+                    });
+                  },
+                  value: chiocehouse,
+                )),)),
+              SizedBox(width: 10,)
+            ],):Text(""),
+            SizedBox(height: 10,),
 
+            Categories!=null?Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Text("維修分類:"),
+                new Expanded(child:
+                new Container(color:Colors.white,
+                  child:new DropdownButtonHideUnderline(child:
+                  new DropdownButton<dynamic>(
+                    isExpanded: true,
+                    hint:Center(child: Text('－－請選擇項目－－',textAlign: TextAlign.center)),
+                    items:Categories.skip(1).map<DropdownMenuItem<dynamic>>((item) {
+                      return new DropdownMenuItem<dynamic>(
+                        child: Center(child:new Text(item['name'])),
+                        value: item['id'],
+                      );
+                    }).toList(),
+                    onChanged: (selectvalue) {
+                      print(selectvalue);
+                      setState(() {
+                        Category=selectvalue;
+                        Itmes=null;
+                      });
+                    },
+                    value: Category,
+                  )),)),
+                SizedBox(width: 10,)
+              ],
+            ):Text(''),
+            SizedBox(height: 10,),
+            Category!=null?Row(children: [
+              Text("維修項目:"),
+              Expanded(child:
+              new Container(color:Colors.white,
+                child:new DropdownButtonHideUnderline(child:
+                new DropdownButton<dynamic>(
+                  isExpanded: true,
+                  hint:Center(child: Text('－－請選擇分類－－',textAlign: TextAlign.center)),
+                  items: itemslist[Category].skip(1).map<DropdownMenuItem<dynamic>>((item) {
+                    return new DropdownMenuItem<dynamic>(
+                      child: Center(child:new Text(item['name'])),
+                      value: item['id'],
+                    );
+                  }).toList(),
+                  onChanged: (selectvalue) {
+                    print(selectvalue);
+                    setState(() {
+                      Itmes=selectvalue;
+                    });
+                  },
+                  value: Itmes,
+                )),)),
+              SizedBox(width: 10,)
+            ],):Text(""),
             Container(
               padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
               child: TextFormField(
@@ -123,10 +212,6 @@ class _messagefix extends State<messagefix> {
         var filename = name[name.length - 1];
         List<int> imageBytes = image.readAsBytesSync();
         String base64Image = base64Encode(imageBytes);
-        setState(() {
-          img1Path=base64Image;
-          camera = 'assets/images/cream.png';
-        });
 
         var re = json.decode(await APIs().uploadimg_project(widget.info['token'],base64Image, filename));
         if (img1Path == null) {
@@ -200,10 +285,7 @@ class _messagefix extends State<messagefix> {
         var filename = name[name.length - 1];
         List<int> imageBytes = image.readAsBytesSync();
         String base64Image = base64Encode(imageBytes);
-        setState(() {
-          img1Path=base64Image;
-          upfile = 'assets/images/flieupload.png';
-        });
+
 
         var re = json.decode(await APIs().uploadimg_project(widget.info['token'],base64Image, filename));
         print(re);
@@ -269,18 +351,19 @@ class _messagefix extends State<messagefix> {
     }
   }
   sentfix()async{
-
       var info = Map<String, dynamic>();
-      info['projectCategoryId'] = "1";
-      info['projectItemId'] = "1";
-      info['name']="test0821";
-      info['phone']="0952689610";
-      info['mobile']="0952689610";
-      info['email']="cola556601@gmail";
-      info['address']="test" ;
+      info['projectCategoryId'] = Category.toString();
+      info['projectItemId'] =Itmes.toString();
+      info['name']=profile['memberName'];
+      info['phone']=profile['memberMobile'];
+      info['mobile']=profile['memberMobile'];
+      info['email']=profile['memberEmail'];
+      info['constructionId']=chiocehouse['constructionId'];
+      info['houseId']=chiocehouse['houseID'];
+      info['address']="" ;
       info['building']=""  ;
-      info['household']="1";
-      info['floor']="1";
+      info['household']="";
+      info['floor']="";
       info['message'] = fixmessage.text.toString();
       List<dynamic> images=[];
       if(img1id!=null)images.add(img1id);
@@ -290,10 +373,7 @@ class _messagefix extends State<messagefix> {
       if(img5id!=null)images.add(img5id);
       info['images'] = images;
       info['files'] = [];
-
-
       var end = json.decode(await APIs().menberfix(widget.info['token'], info));
-
       if (end['code'] == 0) {
         Alert(
             title: '結果',
@@ -315,8 +395,23 @@ class _messagefix extends State<messagefix> {
             context: context,
             type: AlertType.error,
             desc: end['message'],
-
         ).show();      }
 
+  }
+  void getcategory() async {
+    var re = json.decode(await APIs().getcategorylist(widget.info['token']));
+    setState(() {
+      Categories=re['options']['categories'];
+      itemslist=re['options']['items'];
+    });
+    print("Itmes"+itemslist[1].toString());
+  }
+  void getmemberprofile() async {
+    var re = json.decode(await APIs().getmemberprofile(widget.info['token']));
+    setState(() {
+      myhouses=re['houses'];
+      profile=re;
+    });
+    print("houses"+myhouses.toString());
   }
 }

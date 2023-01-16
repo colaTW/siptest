@@ -7,7 +7,7 @@ import 'package:dart_sip_ua_example/src/message.dart';
 import 'package:dart_sip_ua_example/src/messagefix.dart';
 import 'package:dart_sip_ua_example/src/messagelist.dart';
 import 'package:flutter/foundation.dart'
-show debugDefaultTargetPlatformOverride;
+    show debugDefaultTargetPlatformOverride;
 import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:http/http.dart';
@@ -17,9 +17,10 @@ import 'about.dart';
 import 'callscreen.dart';
 import 'dialpad.dart';
 import 'register.dart';
-String getDomainIP="";
-String username="";
-bool isBind=false;
+
+String getDomainIP = "";
+String username = "";
+bool isBind = false;
 
 typedef PageContentBuilder = Widget Function(
     [SIPUAHelper? helper, Object? arguments]);
@@ -34,35 +35,40 @@ class sipphone extends StatefulWidget {
     return _sipphone();
   }
 }
+
 class _sipphone extends State<sipphone> {
-  String gowhere="/home";
+  String gowhere = "/home";
 
   @override
   void initState() {
-    getdata=widget.data;
-
+    getdata = widget.data;
   }
+
   SIPUAHelper _helper = SIPUAHelper();
   Map<String, PageContentBuilder> routes = {
-    '/': ([SIPUAHelper? helper, Object? arguments]) => DialPadWidget(helper,""),
+    '/': ([SIPUAHelper? helper, Object? arguments]) =>
+        DialPadWidget(helper, "", getdata['profile'], getdata['info']),
     '/register': ([SIPUAHelper? helper, Object? arguments]) =>
         RegisterWidget(helper),
     '/callscreen': ([SIPUAHelper? helper, Object? arguments]) =>
         CallScreenWidget(helper, arguments as Call?),
     '/about': ([SIPUAHelper? helper, Object? arguments]) => AboutWidget(),
-    '/home': ([SIPUAHelper? helper, Object? arguments]) => HomeWidget(isBind),
-    '/message': ([SIPUAHelper? helper, Object? arguments]) => message(getdata['info']),
+    '/home': ([SIPUAHelper? helper, Object? arguments]) =>
+        HomeWidget(isBind, getdata['profile']),
+    '/message': ([SIPUAHelper? helper, Object? arguments]) =>
+        message(getdata['info']),
     '/bulletin': ([SIPUAHelper? helper, Object? arguments]) => bulletinlist(),
-    '/messagefix': ([SIPUAHelper? helper, Object? arguments]) => messagefix(getdata['info']),
-    '/messagelist': ([SIPUAHelper? helper, Object? arguments]) => messagelist(getdata['info']),
-    '/security': ([SIPUAHelper? helper, Object? arguments]) => DialPadWidget(helper,"456"),
-    '/bind': ([SIPUAHelper? helper, Object? arguments]) => bindcommunity(getdata['info']),
-
-
+    '/messagefix': ([SIPUAHelper? helper, Object? arguments]) =>
+        messagefix(getdata['info']),
+    '/messagelist': ([SIPUAHelper? helper, Object? arguments]) =>
+        messagelist(getdata['info']),
+    '/security': ([SIPUAHelper? helper, Object? arguments]) =>
+        DialPadWidget(helper, "201", getdata['profile'], getdata['info']),
+    '/bind': ([SIPUAHelper? helper, Object? arguments]) =>
+        bindcommunity(getdata['info']),
   };
 
   Route<dynamic>? _onGenerateRoute(RouteSettings settings) {
-
     final String? name = settings.name;
     final PageContentBuilder? pageContentBuilder = routes[name!];
     if (pageContentBuilder != null) {
@@ -82,12 +88,11 @@ class _sipphone extends State<sipphone> {
 
   @override
   Widget build(BuildContext context) {
-    if(getdata['profile']['houses'].length>0){
-      isBind=true;
-      gowhere="/";
-    }
-    else{
-      isBind=false;
+    if (getdata['profile']['houses'].length > 0) {
+      isBind = true;
+      gowhere = "/";
+    } else {
+      isBind = false;
     }
 
     /*UaSettings settings = UaSettings();
@@ -110,9 +115,6 @@ class _sipphone extends State<sipphone> {
       ),
       initialRoute: gowhere,
       onGenerateRoute: _onGenerateRoute,
-
-
     );
   }
-
 }

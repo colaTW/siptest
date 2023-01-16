@@ -17,9 +17,10 @@ import 'src/register.dart';
 import 'src/sipphone.dart';
 import 'src/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 TextEditingController DomainIP = new TextEditingController();
 
-void main() async{
+void main() async {
   if (WebRTC.platformIsDesktop) {
     debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
   }
@@ -33,34 +34,6 @@ typedef PageContentBuilder = Widget Function(
 
 // ignore: must_be_immutable
 class MyApp extends StatelessWidget {
-  final SIPUAHelper _helper = SIPUAHelper();
-  Map<String, PageContentBuilder> routes = {
-    '/': ([SIPUAHelper? helper, Object? arguments]) => DialPadWidget(helper,""),
-    '/register': ([SIPUAHelper? helper, Object? arguments]) =>
-        RegisterWidget(helper),
-    '/callscreen': ([SIPUAHelper? helper, Object? arguments]) =>
-        CallScreenWidget(helper, arguments as Call?),
-    '/about': ([SIPUAHelper? helper, Object? arguments]) => AboutWidget(),
-  };
-
-   Route<dynamic>? _onGenerateRoute(RouteSettings settings) {
-    final String? name = settings.name;
-    final PageContentBuilder? pageContentBuilder = routes[name!];
-    if (pageContentBuilder != null) {
-      if (settings.arguments != null) {
-        final Route route = MaterialPageRoute<Widget>(
-            builder: (context) =>
-                pageContentBuilder(_helper, settings.arguments));
-        return route;
-      } else {
-        final Route route = MaterialPageRoute<Widget>(
-            builder: (context) => pageContentBuilder(_helper));
-        return route;
-      }
-    }
-    return null;
-  }
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -76,14 +49,15 @@ class MyApp extends StatelessWidget {
         // Main
         else {
           return MaterialApp(
+            debugShowCheckedModeBanner: false,
             home: HomePage(),
           );
         }
       },
     );
   }
-
 }
+
 // SplashPage
 class SplashPage extends StatelessWidget {
   @override
@@ -99,43 +73,43 @@ class SplashPage extends StatelessWidget {
     );
   }
 }
+
 class HomePage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     return _HomePage();
   }
 }
+
 class _HomePage extends State<HomePage> {
   TextEditingController login = TextEditingController();
   TextEditingController password = TextEditingController();
   TextEditingController buildingcode = TextEditingController();
-  bool remeber=false;
-  bool isDisable=false;
+  bool remeber = false;
+  bool isDisable = false;
   @override
   void initState() {
     loadlogininfo();
     super.initState();
-
   }
 
-    @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:Color(0xffE6E1E0) ,
+      backgroundColor: Color(0xffE6E1E0),
       appBar: AppBar(
-        backgroundColor:Color(0xffE6E1E0) ,
+        backgroundColor: Color(0xffE6E1E0),
         title: Text("首頁"),
-        ),
-      body:Column(
+      ),
+      body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Container(
             padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
             child: TextFormField(
-              controller:login,
+              controller: login,
               decoration: const InputDecoration(
                 prefixIcon: Icon(Icons.person),
-
                 labelText: "帳號",
                 hintText: "Your account username",
               ),
@@ -160,7 +134,7 @@ class _HomePage extends State<HomePage> {
               value: remeber,
               onChanged: (bool? value) {
                 setState(() {
-                  remeber = value!? true:false; // rebuilds with new value
+                  remeber = value! ? true : false; // rebuilds with new value
                 });
               },
             ),
@@ -168,84 +142,98 @@ class _HomePage extends State<HomePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-            ElevatedButton(onPressed:isDisable?null:()async{
-              setState(() {
-                isDisable=true;
-              });
-              String get;
-              get = await APIs().login_member(login.text,password.text); //getData()延遲執行後賦值給data
-              var info = json.decode(get);
-              if (info['code'] == 0) {
-                if(remeber){
-                  SharedPreferences prefs = await SharedPreferences.getInstance();
-                  await prefs.setString("username", login.text);
-                  await prefs.setString("password", password.text);
-                  await prefs.setBool("remeber", remeber);
-                }
-                get =await APIs().getmemberprofile(info['token']);
-                var profile=json.decode(get);
+              ElevatedButton(
+                  onPressed: isDisable
+                      ? null
+                      : () async {
+                          setState(() {
+                            isDisable = true;
+                          });
+                          String get;
+                          get = await APIs().login_member(login.text,
+                              password.text); //getData()延遲執行後賦值給data
+                          var info = json.decode(get);
+                          if (info['code'] == 0) {
+                            if (remeber) {
+                              SharedPreferences prefs =
+                                  await SharedPreferences.getInstance();
+                              await prefs.setString("username", login.text);
+                              await prefs.setString("password", password.text);
+                              await prefs.setBool("remeber", remeber);
+                            }
+                            get = await APIs().getmemberprofile(info['token']);
+                            var profile = json.decode(get);
 
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) =>sipphone(
-                        data: {
-                          'info': info,'profile':profile
-                        })));
-              }
-              else {
-                loginfailDialog(context,info['message']);
-              }
-              if(mounted){
-                setState(() {
-                  isDisable=false;
-                });
-              }
-            },
-                child: Text('登入')),
-              GestureDetector(child:Text("|註冊會員",style: TextStyle(color: Colors.blue),),onTap: (){
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) =>registermember()));
-              },)
-          ],)
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => sipphone(data: {
+                                          'info': info,
+                                          'profile': profile
+                                        })));
+                          } else {
+                            loginfailDialog(context, info['message']);
+                          }
+                          if (mounted) {
+                            setState(() {
+                              isDisable = false;
+                            });
+                          }
+                        },
+                  child: Text('登入')),
+              GestureDetector(
+                child: Text(
+                  "|註冊會員",
+                  style: TextStyle(color: Colors.blue),
+                ),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => registermember()));
+                },
+              )
+            ],
+          )
         ],
       ),
-
     );
   }
-  loadlogininfo() async{
+
+  loadlogininfo() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String getlogin=await prefs.getString('username')??"";
-    String getpassword=await prefs.getString('password')??"";
-    bool getremeber=await prefs.getBool('remeber')??false;
+    String getlogin = await prefs.getString('username') ?? "";
+    String getpassword = await prefs.getString('password') ?? "";
+    bool getremeber = await prefs.getBool('remeber') ?? false;
 
     setState(() {
-      login.text= getlogin;
-      password.text=getpassword;
-      remeber=getremeber;
+      login.text = getlogin;
+      password.text = getpassword;
+      remeber = getremeber;
     });
-
   }
-  void loginfailDialog(BuildContext context,String message) {
+
+  void loginfailDialog(BuildContext context, String message) {
     showDialog(
         context: context,
         barrierDismissible: true,
         builder: (BuildContext context) {
           return AlertDialog(
-            content: Text('登入失敗:'+message),
+            content: Text('登入失敗:' + message),
             title: Center(
                 child: Text(
-                  '登入訊息',
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold),
-                )),
+              '登入訊息',
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold),
+            )),
             actions: <Widget>[
               ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
                   child: Text('确定')),
-
             ],
           );
         });

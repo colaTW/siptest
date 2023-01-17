@@ -42,6 +42,23 @@ class APIs {
     // print(response.body);
     return (response.body);
   }
+  getbulltinlist_member(
+      String token, var title, var constructionId, var page,) async {
+    var params = Map<String, String>();
+    var body = Map<String, String>();
+    body["title"] = title.toString();
+    body['page'] = page.toString();
+    body['limit']="10";
+    body['constructionId'] =constructionId.toString();
+    params["Authorization"] = ":Bearer " + token;
+    params["Content-Type"] = "application/json";
+    var uri = Uri.https(url, '/app/api/member/bulletin/list', body);
+    print(body);
+    var client = http.Client();
+    var response = await client.get(uri, headers: params);
+    // print(response.body);
+    return (response.body);
+  }
 
   login_member(String ac, String pas) async {
     var params = Map<String, String>();

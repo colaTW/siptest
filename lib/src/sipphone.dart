@@ -57,7 +57,7 @@ class _sipphone extends State<sipphone> {
         HomeWidget(isBind, getdata['profile']),
     '/message': ([SIPUAHelper? helper, Object? arguments]) =>
         message(getdata['info']),
-    '/bulletin': ([SIPUAHelper? helper, Object? arguments]) => bulletinlist(),
+    '/bulletin': ([SIPUAHelper? helper, Object? arguments]) => bulletinlist(getdata['info'],getdata['profile']),
     '/messagefix': ([SIPUAHelper? helper, Object? arguments]) =>
         messagefix(getdata['info']),
     '/messagelist': ([SIPUAHelper? helper, Object? arguments]) =>

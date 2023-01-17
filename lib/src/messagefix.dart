@@ -67,7 +67,7 @@ class _messagefix extends State<messagefix> {
                 new DropdownButton<dynamic>(
                   isExpanded: true,
                   hint:Center(child: Text('－－請選擇住戶－－',textAlign: TextAlign.center)),
-                  items:myhouses.skip(1).map<DropdownMenuItem<dynamic>>((item) {
+                  items:myhouses.map<DropdownMenuItem<dynamic>>((item) {
                     return new DropdownMenuItem<dynamic>(
                       child: Center(child:new Text(item['constructionName']+item['houseName'])),
                       value: item,
@@ -165,7 +165,7 @@ class _messagefix extends State<messagefix> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         //img1Path==null?Text(''): Image.network(img1Path,height:75,width:75,fit: BoxFit.fill,),
-                        img1Path==null?Text(''): Image.memory(base64Decode(img1Path),height:75,width:75,fit: BoxFit.fill,),
+                        img1Path==null?Text(''): Image.network(img1Path,height:75,width:75,fit: BoxFit.fill,),
                         img1Path==null? Text(''):GestureDetector(onTap:(){ setState(() {img1Path = null;});} ,
                             child: Image.network('https://i.kfs.io/album/tw/166074,0v3/fit/500x500.jpg',fit:BoxFit.cover,width: 20,height: 20,)),
                         SizedBox(width: 50,),
@@ -191,6 +191,40 @@ class _messagefix extends State<messagefix> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
               ElevatedButton(onPressed: (){
+                if(chiocehouse==null){
+                  Fluttertoast.showToast(
+                      msg: "請先選擇報修住戶",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.CENTER,
+                      timeInSecForIosWeb: 1,
+                      textColor: Colors.white,
+                      backgroundColor: Colors.black,
+                      fontSize: 16.0);
+                  return;
+                }
+                if(Category==null){
+                  Fluttertoast.showToast(
+                      msg: "請先選擇維修分類",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.CENTER,
+                      timeInSecForIosWeb: 1,
+                      textColor: Colors.white,
+                      backgroundColor: Colors.black,
+                      fontSize: 16.0);
+                  return;
+                }
+                if(Itmes==null){
+                  Fluttertoast.showToast(
+                      msg:"請先選擇維修項目",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.CENTER,
+                      timeInSecForIosWeb: 1,
+                      textColor: Colors.white,
+                      backgroundColor: Colors.black,
+                      fontSize: 16.0);
+                  return;
+                }
+
                 sentfix();
 
               }, child: Text("送出"))

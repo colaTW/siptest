@@ -152,6 +152,13 @@ class _HomeWidget extends State<HomeWidget> {
                           },
                         ),
                       ),
+
+                    ],
+                  ),
+                  //2ROW
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
                       Expanded(
                         child: GestureDetector(
                           child: Image.asset('assets/images/P7.png',
@@ -172,12 +179,6 @@ class _HomeWidget extends State<HomeWidget> {
                           },
                         ),
                       ),
-                    ],
-                  ),
-                  //2ROW
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
                       Expanded(
                         child: GestureDetector(
                           child: Image.asset('assets/images/P8.png',
@@ -198,12 +199,7 @@ class _HomeWidget extends State<HomeWidget> {
                           },
                         ),
                       ),
-                      SizedBox(
-                        width: width / 3,
-                      ),
-                      SizedBox(
-                        width: width / 3,
-                      ),
+
 
                       /*Expanded(
                   child: GestureDetector(

@@ -58,6 +58,8 @@ class _messagelist extends State<messagelist>{
       for (int i = 0; i < re['projectLists'].length; i++) {
         print( re['projectLists'][i]['createdAt']);
         var goinfo = ItemInfo();
+        goinfo.housename= re['projectLists'][i]['repair']['houseName'];
+
         goinfo.deal_no = re['projectLists'][i]['projectId'].toString();
         goinfo.deal_type = re['projectLists'][i]['projectItemName'] +
             re['projectLists'][i]['projectCategoryName'];
@@ -171,6 +173,9 @@ class _messagelist extends State<messagelist>{
                       style: const TextStyle(fontSize: 12, color: Colors.black),
 
                     ),
+                    ElevatedButton(onPressed: (){
+                      showdetailDialog(context,list[i]);
+                    }, child:Text("詳細資料")),
                   ],)),
               ],
             ),
@@ -386,6 +391,8 @@ class ItemInfo {
   var Warranty;
   String memos;
   String handler_message;
+  String housename;
+
 
   ItemInfo({
     this.deal_no,
@@ -410,10 +417,106 @@ class ItemInfo {
     this.page,
     this.memos,
     this.handler_message,
+    this.housename,
 
   });
 }
+void showdetailDialog(BuildContext context,var show) {
+  final size = MediaQuery.of(context).size;
+  final width = size.width;
+  final height = size.height;
+  showDialog(
+      context: context,
+      builder: (context) {
+        return new AlertDialog(
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("詳細資料"),
+              SizedBox(height: 5,),
+              Container(width: double.infinity,child:
+              DecoratedBox(
+                decoration:BoxDecoration(
+                    border:Border.all(color: Colors.grey,width: 1.0)
+                ),
+              )),
+            ],),
+          content:
+          Container(height: height*0.5,child:
+          SingleChildScrollView(child:
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment:MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
 
+              show.deal_name==null?Text(""):new Text('姓名:\n'+show.deal_name,style:TextStyle(height: 1.5)),
+              SizedBox(height: 15,),
+              new Text("電話:\n"),
+              show.deal_phone==null?Text(""): new Text(show.deal_phone),
+              SizedBox(height: 15,),
+              show.building==null?Text(""): new Text('戶別:\n'+show.housename,style:TextStyle(height: 1.5)),
+              SizedBox(height: 15,),
+
+              show.deal_email==null?Text(""):new Text('Email:\n'+show.deal_email,style:TextStyle(height: 1.5)),
+              SizedBox(height: 15,),
+              show.deal_messg==null?Text(""):new Text('報修說明:\n'+show.deal_messg,style:TextStyle(height: 1.5)),
+              SizedBox(height: 15,),
+              new Text('報修照片:'),
+              new Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  show.deal_img1[0]==''?Text(''): Expanded(child:GestureDetector(child:new Image(image: NetworkImage(show.deal_img1[0]),)
+                    ,onTap: (){
+                      showImageDialog(context, show.deal_img1[0]);
+
+                    },)),
+                  SizedBox(width: 5,),
+                  show.deal_img1[1]==''?Text(''): Expanded(child:GestureDetector(child:new Image(image: NetworkImage(show.deal_img1[1]),)
+                    ,onTap: (){
+                      showImageDialog(context, show.deal_img1[1]);
+                    },)),
+                  SizedBox(width: 5,),
+                  show.deal_img1[2]==''?Text(''):Expanded(child:GestureDetector(child:new Image(image: NetworkImage(show.deal_img1[2]),)
+                    ,onTap: (){
+                      showImageDialog(context, show.deal_img1[2]);
+                    },)),
+                  SizedBox(width: 5,),
+                  show.deal_img1[3]==''?Text(''): Expanded(child:GestureDetector(child:new Image(image: NetworkImage(show.deal_img1[3]),)
+                    ,onTap: (){
+                      showImageDialog(context, show.deal_img1[3]);
+                    },)),
+                  SizedBox(width: 5,),
+                  show.deal_img1[4]==''?Text(''):Expanded(child:GestureDetector(child:new Image(image: NetworkImage(show.deal_img1[4]),)
+                    ,onTap: (){
+                      showImageDialog(context, show.deal_img1[4]);
+                    },)),
+                ],),
+              //show.memos==null?Text('保固備註:\n'):new Text('保固備註:\n'+show.memos),
+              SizedBox(height: 15,),
+              show.deal_onsite==null?Text(''): show.deal_onsite=="是"?new Text('預計場刊日期:\n'+show.deal_onsiteat):Text(""),
+              SizedBox(height: 15,),
+              show.handler_message==null?Text(''): new Text('處理狀況:\n'+show.handler_message)
+
+
+              //new Row(
+              //  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              //  children: <Widget>[
+              //    show.deal_img1[3]==''?Text(''): Expanded(child:new Image(image: NetworkImage(show.deal_img1[3]),)),
+              //    show.deal_img1[4]==''?Text(''): Expanded(child:new Image(image: NetworkImage(show.deal_img1[4]),)),
+              //  ],),
+            ],))),
+          actions: <Widget>[
+            new TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: new Text("確認"),
+            ),
+
+          ],
+        );
+      });
+}
 void showImageDialog(BuildContext context,var imgurl) {
   final size = MediaQuery.of(context).size;
   final width = size.width;

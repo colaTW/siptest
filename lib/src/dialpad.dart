@@ -1,6 +1,8 @@
 // ignore_for_file: unnecessary_new
 
 import 'dart:convert';
+import 'dart:io';
+import 'dart:math';
 
 import 'package:dart_sip_ua_example/src/sipphone.dart';
 import 'package:flutter/foundation.dart';
@@ -47,15 +49,11 @@ class _MyDialPadWidget extends State<DialPadWidget>
   String notify_token = "";
   final List<Message1> messages = [];
   late Map<String, dynamic> getsipinfo;
-
   @override
   initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (get != "") {
-        print("getcola:" + get.toString());
-        setState(() {
-          _textController = TextEditingController(text: get);
-        });
+      if (get == "1") {
+
         showchioceDialog(context);
       }
     });
@@ -71,7 +69,7 @@ class _MyDialPadWidget extends State<DialPadWidget>
           message.notification as RemoteNotification;
       Map<String, dynamic> params = message.data;
       print("mm" + message.toString());
-      print("params" + params.toString());
+      print("params:" + params.toString());
       if (params['type'] == "pickUp") {
         getsipinfo = params;
         UaSettings settings = UaSettings();
@@ -87,12 +85,16 @@ class _MyDialPadWidget extends State<DialPadWidget>
         settings.dtmfMode = DtmfMode.RFC2833;
         print("setting:" + settings.webSocketUrl.toString());
         helper!.start(settings);
+        var rng = Random();
+        sleep(Duration(milliseconds:rng.nextInt(5)*100));
         var get = await APIs().answercall(widget.info['token'],
-            getsipinfo['fromMemberId'], getsipinfo['targetSipId']);
+            getsipinfo['fromId'], getsipinfo['targetSipId'],params['fromType']);
         var respone = json.decode(get);
         print("colarespone" + respone.toString());
       } else if (params['type'] == "call") {
-        Navigator.of(context, rootNavigator: true).pop();
+
+        _textController?.text= params['sipName'];
+        //Navigator.of(context, rootNavigator: true).pop();
         _handleCall(context);
       }
 
@@ -419,7 +421,9 @@ class _MyDialPadWidget extends State<DialPadWidget>
     }
 
     if (callState.state == CallStateEnum.FAILED) {
-      print('有結束了');
+
+      _textController?.text= "";
+
       Navigator.of(context).pop();
       FlutterRingtonePlayer.stop();
     }
@@ -520,6 +524,12 @@ class _MyDialPadWidget extends State<DialPadWidget>
                               print("setting:" +
                                   settings.webSocketUrl.toString());
                               helper!.start(settings);
+                              print("get:"+widget.get.toString());
+                              if(widget.get.toString()=="1"){
+                                print("cola123:"+widget.profile['houses'][index]['constructionTel']);
+                                _textController?.text=widget.profile['houses'][index]['constructionTel'];
+                              }
+
                               Navigator.pop(context);
                               var get = await APIs().startcall(
                                   widget.info['token'],
@@ -527,9 +537,9 @@ class _MyDialPadWidget extends State<DialPadWidget>
                                       ['constructionId'],
                                   _textController?.text);
                               var respone = json.decode(get);
-                              if (respone['code'] == 0) {
-                                callingDialog();
-                              } else {
+                              if (respone['code'] != 0) {
+
+                             //   callingDialog();
                                 Fluttertoast.showToast(
                                     msg: respone['message'],
                                     toastLength: Toast.LENGTH_SHORT,
@@ -538,6 +548,11 @@ class _MyDialPadWidget extends State<DialPadWidget>
                                     textColor: Colors.white,
                                     backgroundColor: Colors.black,
                                     fontSize: 16.0);
+                              }
+                              else{
+                                _textController?.text= respone['data']['targetSipName'];
+                                _handleCall(context);
+
                               }
                             },
                             child: Text("選擇"))

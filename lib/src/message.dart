@@ -37,13 +37,13 @@ class _message extends State<message> {
               children: [
               Container(
                   padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-                  child: ElevatedButton(child:Text("新增報修") ,onPressed: (){
+                  child: ElevatedButton(child:Text("意見回饋") ,onPressed: (){
                     Navigator.pushNamed(context, '/messagefix');
                   },)
               ),
               Container(
                   padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-                  child: ElevatedButton(child:Text("我的報修列表") ,onPressed: (){
+                  child: ElevatedButton(child:Text("我的意見列表") ,onPressed: (){
                     Navigator.pushNamed(context, '/messagelist');
                   },)
               ),

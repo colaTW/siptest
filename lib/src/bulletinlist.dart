@@ -45,7 +45,6 @@ class _bulletinlist extends State<bulletinlist> {
         ),
         body: Column(children: [
           Row(children: [
-            Text("住戶:"),
             new Expanded(child:
             new Container(color:Colors.white,
               child:new DropdownButtonHideUnderline(child:
@@ -163,16 +162,14 @@ class _bulletinlist extends State<bulletinlist> {
                                 showBulltinDialog(context);
                               });
                             }, child: Text("上一則")),
-                            bulletinlistdata[nowbulletin]["images"].length==0?Text("") : Expanded(child:Image.network(bulletinlistdata[nowbulletin]["images"][0]),),
-                            ElevatedButton(onPressed:nowbulletin==bulletinlistdata.le?null:(){
+                            bulletinlistdata[nowbulletin]["images"].length==0?Text("") : Expanded(child:Image.network(bulletinlistdata[nowbulletin]["images"][0]['url']),),
+                            ElevatedButton(onPressed:nowbulletin==bulletinlistdata.length?null:(){
                               setState(() {
                                 nowbulletin++;
                                 Navigator.pop(context);
                                 showBulltinDialog(context);
                               });
                             }, child: Text("下一則")),
-
-
                           ],)
                       ],))
             ),

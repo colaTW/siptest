@@ -134,6 +134,18 @@ class APIs {
     return (response.body);
   }
 
+  managerfix(var tk, var info) async {
+    var params = Map<String, String>();
+    params["Content-Type"] = "application/json";
+    params["Authorization"] = ":Bearer " + tk;
+    var client = http.Client();
+    var body = json.encode(info);
+    print(body);
+    var uri = Uri.https(url, '/app/api/manager/project/handler/one');
+    var response = await client.post(uri, body: body, headers: params);
+    print("here" + response.body);
+    return (response.body);
+  }
   menberfix(var tk, var info) async {
     var params = Map<String, String>();
     params["Content-Type"] = "application/json";
@@ -192,12 +204,13 @@ class APIs {
     return (response.body);
   }
 
-  answercall(var tk, var fromMemberId, var targetSipId) async {
+  answercall(var tk, var fromMemberId, var targetSipId,var fromtype) async {
     var params = Map<String, String>();
     params["Authorization"] = ":Bearer " + tk;
     var body = Map<String, String>();
-    body['fromMemberId'] = fromMemberId.toString();
+    body['fromId'] = fromMemberId.toString();
     body['targetSipId'] = targetSipId.toString();
+    body['fromType'] = fromtype.toString();
     var client = http.Client();
     print("body" + body.toString());
     var uri = Uri.https(url, '/app/api/member/intercom/house/pickup');

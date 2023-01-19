@@ -85,6 +85,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.11"
+  dash_painter:
+    dependency: "direct main"
+    description:
+      name: dash_painter
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.2"
   dbus:
     dependency: transitive
     description:

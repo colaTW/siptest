@@ -191,7 +191,7 @@ class _bulletinlist extends State<bulletinlist> {
                                 style: ElevatedButton.styleFrom(
                                     backgroundColor: Color(0xff7588FA)
                                 ),
-                                onPressed:nowbulletin==bulletinlistdata.length?null:(){
+                                onPressed:nowbulletin==bulletinlistdata.length-1?null:(){
                               setState(() {
                                 nowbulletin++;
                                 Navigator.pop(context);

@@ -414,12 +414,15 @@ class _MyDialPadWidget extends State<DialPadWidget>
     if (callState.state == CallStateEnum.CALL_INITIATION) {
       print("iscall:"+iscall.toString());
 
+
+      Navigator.pushNamed(context, '/callscreen', arguments: call);
       if(iscall==0){
         notification.send("來電", "有人想與您通話");
+        sleep(Duration(milliseconds: 100));
+        notification.send("來電", "有人想與您通話");
+        sleep(Duration(milliseconds: 100));
         notification.send("來電", "有人想與您通話");
       }
-      Navigator.pushNamed(context, '/callscreen', arguments: call);
-
 
 
     }

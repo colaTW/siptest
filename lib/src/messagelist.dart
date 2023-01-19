@@ -69,7 +69,6 @@ class _messagelist extends State<messagelist>{
         goinfo.deal_type_newdate = re['projectLists'][i]['projectItemName'] +
             re['projectLists'][i]['projectCategoryName'] + '\n' +
             re['projectLists'][i]['createdAt'];
-        goinfo.deal_info_case = re['projectLists'][i]['createMember']['name'] ;
         goinfo.deal_phone = re['projectLists'][i]['repair']['mobile'];
         goinfo.deal_status = re['projectLists'][i]['handlerType'];
         goinfo.deal_name = re['projectLists'][i]['repair']['name'];
@@ -81,11 +80,18 @@ class _messagelist extends State<messagelist>{
         goinfo.Warranty=re['projectLists'][i]['overResidentWarranty'];
         goinfo.page=re['currentPage'];
         goinfo.deal_img1 = ['', '', '', '', ''];
+        goinfo.handler_img1 = ['', '', '', '', ''];
+
         totalpage1 = re['totalPages'];
+        goinfo.hadlerlength=re['projectLists'][i]['handlers'].length;
         if (re['projectLists'][i]['handlers'].length > 0) {
           goinfo.deal_onsite = re['projectLists'][i]['handlers'][0]['onSite'];
           goinfo.deal_onsiteat = re['projectLists'][i]['handlers'][0]['onSiteAt'];
           goinfo.handler_message=re['projectLists'][i]['handlers'][0]['message'];
+          goinfo.handler_createManagerName=re['projectLists'][i]['handlers'][0]['createManagerName'];
+          for (int j = 0; j < re['projectLists'][i]['handlers'][0]['images'].length; j++) {
+            goinfo.handler_img1[j] = re['projectLists'][i]['handlers'][0]['images'][j]['url'];
+          }
         }
         for (int j = 0; j < re['projectLists'][i]['images'].length; j++) {
           goinfo.deal_img1[j] = re['projectLists'][i]['images'][j]['url'];
@@ -100,6 +106,7 @@ class _messagelist extends State<messagelist>{
   void getPostsData(var list,int mins) {
     List<Widget> listItems = [];
     for(int i=0;i<list.length;i++) {
+      print(list[i].hadlerlength);
       String show='';
       if(list[i].deal_status=='案件結案'){show=list[i].deal_status;}
       else if(list[i].deal_status=='業外處理'){show=list[i].deal_status;}
@@ -113,8 +120,31 @@ class _messagelist extends State<messagelist>{
       else{
         cardcolor=Colors.white;
       }*/
+      if(list[i].hadlerlength>0){
+        listItems.add(Container(
+            margin: const EdgeInsets.only(bottom:60 ),
+            decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(20.0)), color: cardcolor, boxShadow: [
+              BoxShadow(color: Colors.black.withAlpha(100), blurRadius: 10.0),
+            ]),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Text( list[i].deal_onsiteat),
+                  Text( list[i].handler_message),
+                  ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xff7588FA)),
+                      onPressed: (){
+                    showdetailDialog(context,list[i]);
+                  }, child:Text("詳細資料")),
+                ],
+              ),
+            )));
+      }
 
-      listItems.add(Container(
+     /*listItems.add(Container(
           margin: const EdgeInsets.only(bottom:60 ),
           decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(20.0)), color: cardcolor, boxShadow: [
             BoxShadow(color: Colors.black.withAlpha(100), blurRadius: 10.0),
@@ -173,13 +203,16 @@ class _messagelist extends State<messagelist>{
                       style: const TextStyle(fontSize: 12, color: Colors.black),
 
                     ),
-                    ElevatedButton(onPressed: (){
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xff7588FA)),
+                        onPressed: (){
                       showdetailDialog(context,list[i]);
                     }, child:Text("詳細資料")),
                   ],)),
               ],
             ),
-          )));
+          )));*/
     };
     if(mins==0){
       setState(() {
@@ -205,7 +238,14 @@ class _messagelist extends State<messagelist>{
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xffE6E1E0),
-        title: Text("維修列表"),
+        title: Text("回饋 提醒"),
+        actions: [ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xff7588FA)
+            ),
+            onPressed: (){
+          Navigator.pushNamed(context, '/messagefix');
+        }, child: Text('新增意見'))],
       ),
       body:
       Container(
@@ -244,8 +284,10 @@ class _messagelist extends State<messagelist>{
                                 },
                                 value: type,
                               )):Text(''),
-
-                          Padding(padding:EdgeInsets.only(right:37.0,) ,child:new ElevatedButton(child: Text("搜尋"),
+                          Padding(padding:EdgeInsets.only(right:37.0,) ,
+                              child:new ElevatedButton( style: ElevatedButton.styleFrom(
+                              backgroundColor: Color(0xff7588FA)
+                          ),child: Text("搜尋"),
                               onPressed:isDisable?null:
                                   () async{
                                 setState(() {
@@ -386,12 +428,15 @@ class ItemInfo {
   String deal_onsiteat;
   String building;
   String buildinfo;
+  var hadlerlength;
   var page;
   var deal_img1;
+  var handler_img1;
   var Warranty;
   String memos;
   String handler_message;
   String housename;
+  String handler_createManagerName;
 
 
   ItemInfo({
@@ -418,6 +463,9 @@ class ItemInfo {
     this.memos,
     this.handler_message,
     this.housename,
+    this.hadlerlength,
+    this.handler_img1,
+    this.handler_createManagerName,
 
   });
 }
@@ -448,54 +496,43 @@ void showdetailDialog(BuildContext context,var show) {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment:MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-
-              show.deal_name==null?Text(""):new Text('姓名:\n'+show.deal_name,style:TextStyle(height: 1.5)),
+              show.deal_name==null?Text(""):new Text('回覆人員:\n'+show.handler_createManagerName,style:TextStyle(height: 1.5)),
               SizedBox(height: 15,),
-              new Text("電話:\n"),
-              show.deal_phone==null?Text(""): new Text(show.deal_phone),
-              SizedBox(height: 15,),
-              show.building==null?Text(""): new Text('戶別:\n'+show.housename,style:TextStyle(height: 1.5)),
+              show.handler_message==null?Text(''): new Text('處理狀況:\n'+show.handler_message),
               SizedBox(height: 15,),
 
-              show.deal_email==null?Text(""):new Text('Email:\n'+show.deal_email,style:TextStyle(height: 1.5)),
-              SizedBox(height: 15,),
-              show.deal_messg==null?Text(""):new Text('報修說明:\n'+show.deal_messg,style:TextStyle(height: 1.5)),
-              SizedBox(height: 15,),
-              new Text('報修照片:'),
+              new Text('回覆照片:'),
               new Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  show.deal_img1[0]==''?Text(''): Expanded(child:GestureDetector(child:new Image(image: NetworkImage(show.deal_img1[0]),)
+                  show.handler_img1[0]==''?Text(''): Expanded(child:GestureDetector(child:new Image(image: NetworkImage(show.handler_img1[0]),)
                     ,onTap: (){
-                      showImageDialog(context, show.deal_img1[0]);
-
+                      showImageDialog(context, show.handler_img1[0]);
                     },)),
                   SizedBox(width: 5,),
-                  show.deal_img1[1]==''?Text(''): Expanded(child:GestureDetector(child:new Image(image: NetworkImage(show.deal_img1[1]),)
+                  show.handler_img1[1]==''?Text(''): Expanded(child:GestureDetector(child:new Image(image: NetworkImage(show.handler_img1[1]),)
                     ,onTap: (){
-                      showImageDialog(context, show.deal_img1[1]);
+                      showImageDialog(context, show.handler_img1[1]);
                     },)),
                   SizedBox(width: 5,),
-                  show.deal_img1[2]==''?Text(''):Expanded(child:GestureDetector(child:new Image(image: NetworkImage(show.deal_img1[2]),)
+                  show.handler_img1[2]==''?Text(''):Expanded(child:GestureDetector(child:new Image(image: NetworkImage(show.handler_img1[2]),)
                     ,onTap: (){
-                      showImageDialog(context, show.deal_img1[2]);
+                      showImageDialog(context, show.handler_img1[2]);
                     },)),
                   SizedBox(width: 5,),
-                  show.deal_img1[3]==''?Text(''): Expanded(child:GestureDetector(child:new Image(image: NetworkImage(show.deal_img1[3]),)
+                  show.handler_img1[3]==''?Text(''): Expanded(child:GestureDetector(child:new Image(image: NetworkImage(show.handler_img1[3]),)
                     ,onTap: (){
-                      showImageDialog(context, show.deal_img1[3]);
+                      showImageDialog(context, show.handler_img1[3]);
                     },)),
                   SizedBox(width: 5,),
-                  show.deal_img1[4]==''?Text(''):Expanded(child:GestureDetector(child:new Image(image: NetworkImage(show.deal_img1[4]),)
+                  show.handler_img1[4]==''?Text(''):Expanded(child:GestureDetector(child:new Image(image: NetworkImage(show.handler_img1[4]),)
                     ,onTap: (){
-                      showImageDialog(context, show.deal_img1[4]);
+                      showImageDialog(context, show.handler_img1[4]);
                     },)),
                 ],),
               //show.memos==null?Text('保固備註:\n'):new Text('保固備註:\n'+show.memos),
+
               SizedBox(height: 15,),
-              show.deal_onsite==null?Text(''): show.deal_onsite=="是"?new Text('預計場刊日期:\n'+show.deal_onsiteat):Text(""),
-              SizedBox(height: 15,),
-              show.handler_message==null?Text(''): new Text('處理狀況:\n'+show.handler_message)
 
 
               //new Row(

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dart_sip_ua_example/src/register.dart';
 import 'package:dart_sip_ua_example/src/sipphone.dart';
+import 'package:dash_painter/dash_decoration.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
@@ -34,8 +35,8 @@ class _messagefix extends State<messagefix> {
   var chiocehouse;
   var constructionId;
   var profile;
-  String camera='assets/images/cream.png';
-  String upfile='assets/images/flieupload.png';
+  String camera='assets/images/05.png';
+  String upfile='assets/images/06.png';
   TextEditingController fixmessage = new TextEditingController();
   void initState() {
     this.getcategory();
@@ -51,7 +52,7 @@ class _messagefix extends State<messagefix> {
         backgroundColor: Color(0xffE6E1E0),
 
         appBar: AppBar(
-          title: Text('住戶報修'),
+          title: Text('新增意見'),
           backgroundColor:Color(0xffE6E1E0) ,
 
         ),
@@ -59,8 +60,32 @@ class _messagefix extends State<messagefix> {
           child:Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
+            Row(children: [
+              Image.asset("assets/images/01.png"),
+            ],),
+            Padding(padding: EdgeInsets.all(10),child:Container(
+              decoration:DashDecoration(
+                  pointWidth: 20,
+                  step: 3,
+                  pointCount: 10,
+                  gradient: SweepGradient(colors: [
+                    Colors.blue,
+                    Colors.blue,
+                    Colors.blue,
+                    Colors.blue,
+                  ])),
+              child: TextFormField(
+                controller: fixmessage,
+                minLines: 10,
+                maxLines: 15,
+                decoration: const InputDecoration(
+                  border: InputBorder.none,
+                ),
+              ),
+            ), ),
+
             myhouses!=null?Row(children: [
-              Text("報修住戶:"),
+             Image.asset("assets/images/02.png"),
               new Expanded(child:
               new Container(color:Colors.white,
                 child:new DropdownButtonHideUnderline(child:
@@ -84,70 +109,9 @@ class _messagefix extends State<messagefix> {
             ],):Text(""),
             SizedBox(height: 10,),
 
-            Categories!=null?Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                Text("維修分類:"),
-                new Expanded(child:
-                new Container(color:Colors.white,
-                  child:new DropdownButtonHideUnderline(child:
-                  new DropdownButton<dynamic>(
-                    isExpanded: true,
-                    hint:Center(child: Text('－－請選擇項目－－',textAlign: TextAlign.center)),
-                    items:Categories.skip(1).map<DropdownMenuItem<dynamic>>((item) {
-                      return new DropdownMenuItem<dynamic>(
-                        child: Center(child:new Text(item['name'])),
-                        value: item['id'],
-                      );
-                    }).toList(),
-                    onChanged: (selectvalue) {
-                      print(selectvalue);
-                      setState(() {
-                        Category=selectvalue;
-                        Itmes=null;
-                      });
-                    },
-                    value: Category,
-                  )),)),
-                SizedBox(width: 10,)
-              ],
-            ):Text(''),
-            SizedBox(height: 10,),
-            Category!=null?Row(children: [
-              Text("維修項目:"),
-              Expanded(child:
-              new Container(color:Colors.white,
-                child:new DropdownButtonHideUnderline(child:
-                new DropdownButton<dynamic>(
-                  isExpanded: true,
-                  hint:Center(child: Text('－－請選擇分類－－',textAlign: TextAlign.center)),
-                  items: itemslist[Category].skip(1).map<DropdownMenuItem<dynamic>>((item) {
-                    return new DropdownMenuItem<dynamic>(
-                      child: Center(child:new Text(item['name'])),
-                      value: item['id'],
-                    );
-                  }).toList(),
-                  onChanged: (selectvalue) {
-                    print(selectvalue);
-                    setState(() {
-                      Itmes=selectvalue;
-                    });
-                  },
-                  value: Itmes,
-                )),)),
-              SizedBox(width: 10,)
-            ],):Text(""),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-              child: TextFormField(
-                controller: fixmessage,
-                minLines: 10,
-                maxLines: 15,
-                decoration: const InputDecoration(
-                  hintText: "ex:浴室水龍頭漏水",
-                ),
-              ),
-            ),
+            Row(children: [
+              Image.asset("assets/images/03.png")
+            ],),
             Row(
               children: <Widget>[
                 Expanded(child: IconButton(icon:Image.asset(camera),onPressed: _takePhoto,iconSize:100,)),
@@ -190,48 +154,21 @@ class _messagefix extends State<messagefix> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-              ElevatedButton(onPressed: (){
-                if(chiocehouse==null){
-                  Fluttertoast.showToast(
-                      msg: "請先選擇報修住戶",
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.CENTER,
-                      timeInSecForIosWeb: 1,
-                      textColor: Colors.white,
-                      backgroundColor: Colors.black,
-                      fontSize: 16.0);
-                  return;
-                }
-                if(Category==null){
-                  Fluttertoast.showToast(
-                      msg: "請先選擇維修分類",
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.CENTER,
-                      timeInSecForIosWeb: 1,
-                      textColor: Colors.white,
-                      backgroundColor: Colors.black,
-                      fontSize: 16.0);
-                  return;
-                }
-                if(Itmes==null){
-                  Fluttertoast.showToast(
-                      msg:"請先選擇維修項目",
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.CENTER,
-                      timeInSecForIosWeb: 1,
-                      textColor: Colors.white,
-                      backgroundColor: Colors.black,
-                      fontSize: 16.0);
-                  return;
-                }
-
-                sentfix();
-
-              }, child: Text("送出"))
+                GestureDetector(child:Image.asset("assets/images/07.png"),onTap: (){
+                  if(chiocehouse==null){
+                    Fluttertoast.showToast(
+                        msg: "請先選擇報修住戶",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.CENTER,
+                        timeInSecForIosWeb: 1,
+                        textColor: Colors.white,
+                        backgroundColor: Colors.black,
+                        fontSize: 16.0);
+                    return;
+                  }
+                  sentfix();
+                },),
             ],)
-
-
-
           ],
         ),
         ));
@@ -386,8 +323,8 @@ class _messagefix extends State<messagefix> {
   }
   sentfix()async{
       var info = Map<String, dynamic>();
-      info['projectCategoryId'] = Category.toString();
-      info['projectItemId'] =Itmes.toString();
+      info['projectCategoryId'] = "6";
+      info['projectItemId'] ="16";
       info['name']=profile['memberName'];
       info['phone']=profile['memberMobile'];
       info['mobile']=profile['memberMobile'];

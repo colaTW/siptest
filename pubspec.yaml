@@ -42,6 +42,8 @@ dependencies:
   url_launcher: ^6.1.7
   firebase_messaging: ^14.2.1
   firebase_core: ^2.4.1
+  dash_painter: ^1.0.2
+
 
 
 dev_dependencies:

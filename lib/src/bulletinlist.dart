@@ -36,7 +36,9 @@ class _bulletinlist extends State<bulletinlist> {
 
   @override
   Widget build(BuildContext context) {
-
+    final size = MediaQuery.of(context).size;
+    final width = size.width/10;
+    final height = size.height;
     return new Scaffold(
         backgroundColor: Color(0xffE6E1E0),
         appBar: new AppBar(
@@ -66,8 +68,10 @@ class _bulletinlist extends State<bulletinlist> {
                 },
                 value: chiocehouse,
               )),)),
-            SizedBox(width: 10,)
+            SizedBox(width: 10,),
           ],),
+          Divider(height:20.0,indent: 0.0,color: Colors.black,),
+
           SingleChildScrollView(
             child: new ListView.builder(
               shrinkWrap: true,
@@ -78,12 +82,20 @@ class _bulletinlist extends State<bulletinlist> {
                     child: new Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Flexible(child: new Text(bulletinlistdata[index]['bulletinTitle'],softWrap: false,overflow: TextOverflow.ellipsis,maxLines: 2,),),
-                        Flexible(child: new Text(bulletinlistdata[index]['bulletinContent'],softWrap: false,overflow: TextOverflow.ellipsis,maxLines: 2,),),
-                        ElevatedButton(onPressed: (){
-                             nowbulletin=index;
-                             showBulltinDialog(context);
-                        }, child: Text("詳細內容..."))
+                        Container(width: width*2,child: Flexible(child: new Text(bulletinlistdata[index]['bulletinTitle'],softWrap: false,overflow: TextOverflow.ellipsis,maxLines: 4,textAlign: TextAlign.left),),
+                            ),
+                        Container(width: width*5,child:Flexible(child: new Text(bulletinlistdata[index]['bulletinContent'],softWrap: false,overflow: TextOverflow.ellipsis,maxLines: 4,textAlign: TextAlign.left,),),
+                            ),
+                        Container(child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Color(0xff7588FA)
+                          ),
+                            onPressed: (){
+                          nowbulletin=index;
+                          showBulltinDialog(context);
+                        }, child: Text("詳細內容...")),)
+
+
                       ], )
                 );
               },
@@ -93,7 +105,11 @@ class _bulletinlist extends State<bulletinlist> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
             isloading?Center(child: CircularProgressIndicator(),)
-                :ElevatedButton(onPressed:nowpage==1?null:(){
+                :ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xff7588FA)
+                ),
+                onPressed:nowpage==1?null:(){
             setState(() {
             nowpage--;
             isloading=true;
@@ -102,7 +118,11 @@ class _bulletinlist extends State<bulletinlist> {
             }, child: Text("<")),
             Text(nowpage.toString()+"/"+totalpage.toString()),
             isloading?Center(child: CircularProgressIndicator(),)
-                :ElevatedButton(onPressed:nowpage==totalpage?null:(){
+                :ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xff7588FA)
+                ),
+                onPressed:nowpage==totalpage?null:(){
             setState(() {
             nowpage++;
             isloading=true;
@@ -155,7 +175,11 @@ class _bulletinlist extends State<bulletinlist> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            ElevatedButton(onPressed:nowbulletin==0?null:(){
+                            ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: Color(0xff7588FA)
+                                ),
+                                onPressed:nowbulletin==0?null:(){
                               setState(() {
                                 nowbulletin--;
                                 Navigator.pop(context);
@@ -163,7 +187,11 @@ class _bulletinlist extends State<bulletinlist> {
                               });
                             }, child: Text("上一則")),
                             bulletinlistdata[nowbulletin]["images"].length==0?Text("") : Expanded(child:Image.network(bulletinlistdata[nowbulletin]["images"][0]['url']),),
-                            ElevatedButton(onPressed:nowbulletin==bulletinlistdata.length?null:(){
+                            ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: Color(0xff7588FA)
+                                ),
+                                onPressed:nowbulletin==bulletinlistdata.length?null:(){
                               setState(() {
                                 nowbulletin++;
                                 Navigator.pop(context);

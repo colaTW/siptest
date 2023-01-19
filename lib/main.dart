@@ -96,6 +96,13 @@ class _HomePage extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        child: Text('V1.0.6'),
+        onPressed: null,
+        backgroundColor: Colors.grey,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(14.0))),
+
+      ),
       backgroundColor: Color(0xffE6E1E0),
       appBar: AppBar(
         backgroundColor: Color(0xffE6E1E0),

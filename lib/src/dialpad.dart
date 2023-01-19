@@ -25,6 +25,7 @@ import 'package:firebase_core/firebase_core.dart';
 
 TextEditingController DomainIP = new TextEditingController();
 dynamic nowwho;
+var iscall=0;
 
 class DialPadWidget extends StatefulWidget {
   final SIPUAHelper? _helper;
@@ -91,11 +92,6 @@ class _MyDialPadWidget extends State<DialPadWidget>
             getsipinfo['fromId'], getsipinfo['targetSipId'],params['fromType']);
         var respone = json.decode(get);
         print("colarespone" + respone.toString());
-      } else if (params['type'] == "call") {
-
-        _textController?.text= params['sipName'];
-        //Navigator.of(context, rootNavigator: true).pop();
-        _handleCall(context);
       }
 
       /*UaSettings settings = UaSettings();
@@ -416,14 +412,20 @@ class _MyDialPadWidget extends State<DialPadWidget>
   @override
   void callStateChanged(Call call, CallState callState) {
     if (callState.state == CallStateEnum.CALL_INITIATION) {
-      notification.send("來電", "有人想與您通話");
+      print("iscall:"+iscall.toString());
+
+      if(iscall==0){
+        notification.send("來電", "有人想與您通話");
+        notification.send("來電", "有人想與您通話");
+      }
       Navigator.pushNamed(context, '/callscreen', arguments: call);
+
+
+
     }
-
     if (callState.state == CallStateEnum.FAILED) {
-
       _textController?.text= "";
-
+      iscall=0;
       Navigator.of(context).pop();
       FlutterRingtonePlayer.stop();
     }
@@ -526,34 +528,43 @@ class _MyDialPadWidget extends State<DialPadWidget>
                               helper!.start(settings);
                               print("get:"+widget.get.toString());
                               if(widget.get.toString()=="1"){
-                                print("cola123:"+widget.profile['houses'][index]['constructionTel']);
-                                _textController?.text=widget.profile['houses'][index]['constructionTel'];
-                              }
+                                Navigator.pop(context);
+                                _textController?.text=widget.profile['houses'][index]['constructionSipUserName'];
+                                iscall=1;
+                                sleep(Duration(milliseconds:500));
 
-                              Navigator.pop(context);
-                              var get = await APIs().startcall(
-                                  widget.info['token'],
-                                  widget.profile['houses'][index]
-                                      ['constructionId'],
-                                  _textController?.text);
-                              var respone = json.decode(get);
-                              if (respone['code'] != 0) {
-
-                             //   callingDialog();
-                                Fluttertoast.showToast(
-                                    msg: respone['message'],
-                                    toastLength: Toast.LENGTH_SHORT,
-                                    gravity: ToastGravity.CENTER,
-                                    timeInSecForIosWeb: 1,
-                                    textColor: Colors.white,
-                                    backgroundColor: Colors.black,
-                                    fontSize: 16.0);
-                              }
-                              else{
-                                _textController?.text= respone['data']['targetSipName'];
                                 _handleCall(context);
 
                               }
+                              else{
+                                Navigator.pop(context);
+                                var get = await APIs().startcall(
+                                    widget.info['token'],
+                                    widget.profile['houses'][index]
+                                    ['constructionId'],
+                                    _textController?.text);
+                                var respone = json.decode(get);
+                                if (respone['code'] != 0) {
+                                  //   callingDialog();
+                                  Fluttertoast.showToast(
+                                      msg: respone['message'],
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.CENTER,
+                                      timeInSecForIosWeb: 1,
+                                      textColor: Colors.white,
+                                      backgroundColor: Colors.black,
+                                      fontSize: 16.0);
+                                }
+                                else{
+                                  _textController?.text= respone['data']['targetSipName'];
+                                  iscall=1;
+                                  sleep(Duration(milliseconds:500));
+                                  _handleCall(context);
+
+                                }
+                              }
+
+
                             },
                             child: Text("選擇"))
                       ],

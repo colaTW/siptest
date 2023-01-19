@@ -175,7 +175,7 @@ class _HomeWidget extends State<HomeWidget> {
                                   fontSize: 16.0);
                               return;
                             }
-                            Navigator.pushNamed(context, '/message');
+                            Navigator.pushNamed(context, '/messagelist');
                           },
                         ),
                       ),

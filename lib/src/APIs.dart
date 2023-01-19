@@ -48,7 +48,7 @@ class APIs {
     var body = Map<String, String>();
     body["title"] = title.toString();
     body['page'] = page.toString();
-    body['limit']="10";
+    body['limit']="5";
     body['constructionId'] =constructionId.toString();
     params["Authorization"] = ":Bearer " + token;
     params["Content-Type"] = "application/json";

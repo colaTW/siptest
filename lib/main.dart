@@ -4,6 +4,7 @@ import 'package:dart_sip_ua_example/src/APIs.dart';
 import 'package:dart_sip_ua_example/src/gobalinfo.dart';
 import 'package:dart_sip_ua_example/src/registermember.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart'
     show debugDefaultTargetPlatformOverride;
 import 'package:flutter/material.dart';
@@ -20,12 +21,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 TextEditingController DomainIP = new TextEditingController();
 
+
 void main() async {
   if (WebRTC.platformIsDesktop) {
     debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
   }
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
+
   runApp(MyApp());
 }
 
@@ -139,10 +143,14 @@ class _HomePage extends State<HomePage> {
             child: CheckboxListTile(
               title: const Text('是否記住登入資訊'),
               value: remeber,
-              onChanged: (bool? value) {
+              onChanged: (bool? value) async{
                 setState(() {
                   remeber = value! ? true : false; // rebuilds with new value
                 });
+                SharedPreferences prefs =
+                await SharedPreferences.getInstance();
+
+                await prefs.setBool("remeber", remeber);
               },
             ),
           ),
@@ -214,9 +222,16 @@ class _HomePage extends State<HomePage> {
     bool getremeber = await prefs.getBool('remeber') ?? false;
 
     setState(() {
-      login.text = getlogin;
-      password.text = getpassword;
       remeber = getremeber;
+
+      if(getremeber){
+        login.text = getlogin;
+        password.text = getpassword;
+      }
+      else{
+        login.text = "";
+        password.text = "";
+      }
     });
   }
 

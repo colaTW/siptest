@@ -7,6 +7,11 @@ import 'dart:math';
 import 'package:dart_sip_ua_example/src/sipphone.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_callkit_incoming/entities/android_params.dart';
+import 'package:flutter_callkit_incoming/entities/call_event.dart';
+import 'package:flutter_callkit_incoming/entities/call_kit_params.dart';
+import 'package:flutter_callkit_incoming/entities/ios_params.dart';
+import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -14,6 +19,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_ua/sip_ua.dart';
+import 'package:uuid/uuid.dart';
 import '../notification.dart';
 import 'APIs.dart';
 import 'callscreen.dart';
@@ -26,6 +32,36 @@ import 'package:firebase_core/firebase_core.dart';
 TextEditingController DomainIP = new TextEditingController();
 dynamic nowwho;
 var iscall=0;
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  print("Handling a background message: ${message.messageId}");
+  RemoteNotification notification =
+  message.notification as RemoteNotification;
+  Map<String, dynamic> params = message.data;
+  print("message:"+message.toString());
+  print("params:" + params.toString());
+  if (params['type'] == "pickUp") {
+  }
+  showCallkitIncoming(Uuid().v4());
+}
+
+Future<void> showCallkitIncoming(String uuid) async {
+  final params = CallKitParams(
+    id: uuid,
+    nameCaller: '打來啦',
+    appName: 'Callkit',
+    type: 0,
+    duration: 30000,
+    textMissedCall: 'Missed call',
+    textCallback: 'Call back',
+    extra: <String, dynamic>{'userId': '1a2b3c4d'},
+    headers: <String, dynamic>{'apiKey': 'Abc@123!', 'platform': 'flutter'},
+
+  );
+
+  await FlutterCallkitIncoming.showCallkitIncoming(params);
+
+}
 
 class DialPadWidget extends StatefulWidget {
   final SIPUAHelper? _helper;
@@ -52,9 +88,10 @@ class _MyDialPadWidget extends State<DialPadWidget>
   late Map<String, dynamic> getsipinfo;
   @override
   initState() {
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (get == "1") {
-
         showchioceDialog(context);
       }
     });
@@ -66,10 +103,11 @@ class _MyDialPadWidget extends State<DialPadWidget>
 
     _firebaseMessaging.subscribeToTopic('all');
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+
       RemoteNotification notification =
           message.notification as RemoteNotification;
       Map<String, dynamic> params = message.data;
-      print("mm" + message.toString());
+      print("message:"+message.toString());
       print("params:" + params.toString());
       if (params['type'] == "pickUp") {
         getsipinfo = params;
@@ -109,7 +147,17 @@ class _MyDialPadWidget extends State<DialPadWidget>
     });
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
       print("onMessageOpenedApp: $message");
+      Navigator.pushNamed(context, '/');
+
     });
+    FirebaseMessaging.onBackgroundMessage((RemoteMessage message) async{
+      print("onBackgroundMessage");
+      showCallkitIncoming(Uuid().v4());
+
+    }
+
+    );
+
 
     _firebaseMessaging.requestPermission(
       alert: true,
@@ -120,8 +168,45 @@ class _MyDialPadWidget extends State<DialPadWidget>
       provisional: false,
       sound: true,
     );
-  }
+    FlutterCallkitIncoming.onEvent.listen((event) {
+      switch (event!.event) {
+        case Event.ACTION_CALL_ACCEPT:
+          print("ACTION_CALL_ACCEPT");
+        // TODO: accepted an incoming call
+        // TODO: show screen calling in Flutter
+          break;
+        case Event.ACTION_CALL_DECLINE:
+          print("ACTION_CALL_DECLINE");
+        // TODO: declined an incoming call
+          break;
 
+      }
+    });
+  }
+void loginsip(var params) async{
+  if (params['type'] == "pickUp") {
+    getsipinfo = params;
+    UaSettings settings = UaSettings();
+    settings.webSocketUrl = "ws://ip-intercom.reddotsolution.com:8080/ws";
+    settings.webSocketSettings.allowBadCertificate = true;
+    //settings.webSocketSettings.userAgent = 'Dart/2.8 (dart:io) for OpenSIPS.';
+    settings.uri =
+        params['targetSipName'] + "@ip-intercom.reddotsolution.com";
+    settings.authorizationUser = params['targetSipName'];
+    settings.password = params['targetSipPassword'];
+    settings.displayName = params['targetSipName'];
+    settings.userAgent = 'Dart SIP Client v1.0.0';
+    settings.dtmfMode = DtmfMode.RFC2833;
+    print("setting:" + settings.webSocketUrl.toString());
+    helper!.start(settings);
+    var rng = Random();
+    sleep(Duration(milliseconds:rng.nextInt(5)*100));
+    var get = await APIs().answercall(widget.info['token'],
+        getsipinfo['fromId'], getsipinfo['targetSipId'],params['fromType']);
+    var respone = json.decode(get);
+    print("colarespone" + respone.toString());
+  }
+}
   void _loadSettings() async {
     _preferences = await SharedPreferences.getInstance();
     _dest = _preferences.getString('dest') ?? '';
@@ -142,6 +227,8 @@ class _MyDialPadWidget extends State<DialPadWidget>
       await Permission.microphone.request();
       await Permission.camera.request();
     }
+    _textController?.text="";
+
     if (dest == null || dest.isEmpty) {
       showDialog<void>(
         context: context,
@@ -413,15 +500,9 @@ class _MyDialPadWidget extends State<DialPadWidget>
   void callStateChanged(Call call, CallState callState) {
     if (callState.state == CallStateEnum.CALL_INITIATION) {
       print("iscall:"+iscall.toString());
-
-
       Navigator.pushNamed(context, '/callscreen', arguments: call);
       if(iscall==0){
-        notification.send("來電", "有人想與您通話");
-        sleep(Duration(milliseconds: 100));
-        notification.send("來電", "有人想與您通話");
-        sleep(Duration(milliseconds: 100));
-        notification.send("來電", "有人想與您通話");
+
       }
 
 
@@ -534,7 +615,7 @@ class _MyDialPadWidget extends State<DialPadWidget>
                                 Navigator.pop(context);
                                 _textController?.text=widget.profile['houses'][index]['constructionSipUserName'];
                                 iscall=1;
-                                sleep(Duration(milliseconds:500));
+                                await Future.delayed(const Duration(seconds: 1));
 
                                 _handleCall(context);
 
@@ -561,7 +642,7 @@ class _MyDialPadWidget extends State<DialPadWidget>
                                 else{
                                   _textController?.text= respone['data']['targetSipName'];
                                   iscall=1;
-                                  sleep(Duration(milliseconds:500));
+                                  await Future.delayed(const Duration(seconds: 1));
                                   _handleCall(context);
 
                                 }

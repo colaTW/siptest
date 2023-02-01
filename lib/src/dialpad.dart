@@ -32,23 +32,39 @@ import 'package:firebase_core/firebase_core.dart';
 TextEditingController DomainIP = new TextEditingController();
 dynamic nowwho;
 var iscall=0;
+SIPUAHelper helper2 = SIPUAHelper();
+String whoscall="080";
 
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  print("Handling a background message: ${message.messageId}");
+@pragma('vm:entry-point')
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  print("Handling a background message");
   RemoteNotification notification =
   message.notification as RemoteNotification;
   Map<String, dynamic> params = message.data;
   print("message:"+message.toString());
   print("params:" + params.toString());
   if (params['type'] == "pickUp") {
-  }
-  showCallkitIncoming(Uuid().v4());
+    UaSettings settings = UaSettings();
+    settings.webSocketUrl = "ws://ip-intercom.reddotsolution.com:8080/ws";
+    settings.webSocketSettings.allowBadCertificate = true;
+    //settings.webSocketSettings.userAgent = 'Dart/2.8 (dart:io) for OpenSIPS.';
+    settings.uri =
+        params['targetSipName'] + "@ip-intercom.reddotsolution.com";
+    settings.authorizationUser = params['targetSipName'];
+    settings.password = params['targetSipPassword'];
+    settings.displayName = params['targetSipName'];
+    settings.userAgent = 'Dart SIP Client v1.0.0';
+    settings.dtmfMode = DtmfMode.RFC2833;
+    helper2!.start(settings);
+
+   }
 }
+
 
 Future<void> showCallkitIncoming(String uuid) async {
   final params = CallKitParams(
     id: uuid,
-    nameCaller: '打來啦',
+    nameCaller: whoscall+' 來電',
     appName: 'Callkit',
     type: 0,
     duration: 30000,
@@ -56,9 +72,7 @@ Future<void> showCallkitIncoming(String uuid) async {
     textCallback: 'Call back',
     extra: <String, dynamic>{'userId': '1a2b3c4d'},
     headers: <String, dynamic>{'apiKey': 'Abc@123!', 'platform': 'flutter'},
-
   );
-
   await FlutterCallkitIncoming.showCallkitIncoming(params);
 
 }
@@ -77,7 +91,8 @@ class DialPadWidget extends StatefulWidget {
 class _MyDialPadWidget extends State<DialPadWidget>
     implements SipUaHelperListener {
   String? _dest;
-  SIPUAHelper? get helper => widget._helper;
+  get helper => widget._helper;
+  //get helper=>helper2;
   TextEditingController? _textController;
   late SharedPreferences _preferences;
   String? get get => widget.get;
@@ -88,8 +103,7 @@ class _MyDialPadWidget extends State<DialPadWidget>
   late Map<String, dynamic> getsipinfo;
   @override
   initState() {
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (get == "1") {
         showchioceDialog(context);
@@ -100,16 +114,15 @@ class _MyDialPadWidget extends State<DialPadWidget>
     _bindEventListeners();
     _loadSettings();
     print("cola" + get.toString());
-
     _firebaseMessaging.subscribeToTopic('all');
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-
       RemoteNotification notification =
           message.notification as RemoteNotification;
       Map<String, dynamic> params = message.data;
       print("message:"+message.toString());
       print("params:" + params.toString());
       if (params['type'] == "pickUp") {
+        whoscall="6699";
         getsipinfo = params;
         UaSettings settings = UaSettings();
         settings.webSocketUrl = "ws://ip-intercom.reddotsolution.com:8080/ws";
@@ -168,45 +181,8 @@ class _MyDialPadWidget extends State<DialPadWidget>
       provisional: false,
       sound: true,
     );
-    FlutterCallkitIncoming.onEvent.listen((event) {
-      switch (event!.event) {
-        case Event.ACTION_CALL_ACCEPT:
-          print("ACTION_CALL_ACCEPT");
-        // TODO: accepted an incoming call
-        // TODO: show screen calling in Flutter
-          break;
-        case Event.ACTION_CALL_DECLINE:
-          print("ACTION_CALL_DECLINE");
-        // TODO: declined an incoming call
-          break;
+  }
 
-      }
-    });
-  }
-void loginsip(var params) async{
-  if (params['type'] == "pickUp") {
-    getsipinfo = params;
-    UaSettings settings = UaSettings();
-    settings.webSocketUrl = "ws://ip-intercom.reddotsolution.com:8080/ws";
-    settings.webSocketSettings.allowBadCertificate = true;
-    //settings.webSocketSettings.userAgent = 'Dart/2.8 (dart:io) for OpenSIPS.';
-    settings.uri =
-        params['targetSipName'] + "@ip-intercom.reddotsolution.com";
-    settings.authorizationUser = params['targetSipName'];
-    settings.password = params['targetSipPassword'];
-    settings.displayName = params['targetSipName'];
-    settings.userAgent = 'Dart SIP Client v1.0.0';
-    settings.dtmfMode = DtmfMode.RFC2833;
-    print("setting:" + settings.webSocketUrl.toString());
-    helper!.start(settings);
-    var rng = Random();
-    sleep(Duration(milliseconds:rng.nextInt(5)*100));
-    var get = await APIs().answercall(widget.info['token'],
-        getsipinfo['fromId'], getsipinfo['targetSipId'],params['fromType']);
-    var respone = json.decode(get);
-    print("colarespone" + respone.toString());
-  }
-}
   void _loadSettings() async {
     _preferences = await SharedPreferences.getInstance();
     _dest = _preferences.getString('dest') ?? '';
@@ -499,15 +475,17 @@ void loginsip(var params) async{
   @override
   void callStateChanged(Call call, CallState callState) {
     if (callState.state == CallStateEnum.CALL_INITIATION) {
-      print("iscall:"+iscall.toString());
       Navigator.pushNamed(context, '/callscreen', arguments: call);
       if(iscall==0){
+        showCallkitIncoming(Uuid().v4());
 
       }
 
 
     }
     if (callState.state == CallStateEnum.FAILED) {
+       FlutterCallkitIncoming.endAllCalls();
+
       _textController?.text= "";
       iscall=0;
       Navigator.of(context).pop();

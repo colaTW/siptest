@@ -2,11 +2,17 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_callkit_incoming/entities/call_event.dart';
+import 'package:flutter_callkit_incoming/entities/call_kit_params.dart';
+import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:sip_ua/sip_ua.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
+import 'package:uuid/uuid.dart';
 import '../notification.dart';
 import 'widgets/action_button.dart';
+
+
 
 class CallScreenWidget extends StatefulWidget {
   final SIPUAHelper? _helper;
@@ -41,7 +47,7 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
       (_localStream == null || _localStream!.getVideoTracks().isEmpty) &&
       (_remoteStream == null || _remoteStream!.getVideoTracks().isEmpty);
 
-  String? get remoteIdentity => call!.remote_identity;
+  String? get remoteIdentity => call!.remote_display_name;
 
   String get direction => call!.direction;
 
@@ -54,6 +60,22 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
     helper!.addSipUaHelperListener(this);
     FlutterRingtonePlayer.playRingtone();
     _startTimer();
+
+    FlutterCallkitIncoming.onEvent.listen((event) {
+      switch (event!.event) {
+        case Event.ACTION_CALL_ACCEPT:
+          print("ACTION_CALL_ACCEPT");
+          // TODO: accepted an incoming call
+          // TODO: show screen calling in Flutter
+          _handleAccept();
+          break;
+        case Event.ACTION_CALL_DECLINE:
+          print("ACTION_CALL_DECLINE");
+          _handleHangup();
+          break;
+
+      }
+    });
   }
 
   @override
@@ -130,6 +152,7 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
 
     switch (callState.state) {
       case CallStateEnum.STREAM:
+
         _handelStreams(callState);
         break;
       case CallStateEnum.ENDED:
@@ -219,6 +242,8 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
   }
 
   void _handleAccept() async {
+    FlutterCallkitIncoming.endAllCalls();
+
     FlutterRingtonePlayer.stop();
     bool remoteHasVideo = call!.remote_has_video;
     final mediaConstraints = <String, dynamic>{

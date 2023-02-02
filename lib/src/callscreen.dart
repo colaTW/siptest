@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -13,13 +14,15 @@ import '../notification.dart';
 import 'widgets/action_button.dart';
 
 
-
+var x=0;
+var cancelcall=true;
 class CallScreenWidget extends StatefulWidget {
   final SIPUAHelper? _helper;
   final Call? _call;
   CallScreenWidget(this._helper, this._call, {Key? key}) : super(key: key);
   @override
   _MyCallScreenWidget createState() => _MyCallScreenWidget();
+
 }
 
 class _MyCallScreenWidget extends State<CallScreenWidget>
@@ -53,31 +56,53 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
 
   Call? get call => widget._call;
 
+
   @override
   initState() {
+    FlutterCallkitIncoming.onEvent.listen((event) {
+      switch (event!.event) {
+        case Event.ACTION_CALL_ACCEPT:
+          print("cola:ACTION_CALL_ACCEPT");
+          // TODO: accepted an incoming call
+          // TODO: show screen calling in Flutter
+          x=0;
+          cancelcall=false;
+          _handleAccept();
+
+          break;
+        case Event.ACTION_CALL_DECLINE:
+          print("cola:ACTION_CALL_DECLINE");
+          cancelcall=true;
+
+          if(x==1){break;}
+          _handleHangup();
+          break;
+        case Event.ACTION_CALL_ENDED:
+          print("ACTION_CALL_ENDED");
+
+          // TODO: ended an incoming/outgoing call
+          break;
+
+      }
+    });
+    if(Platform.isIOS){
+      WidgetsBinding.instance
+          .addPostFrameCallback((_) => checkcall());
+    }
+
     super.initState();
     _initRenderers();
     helper!.addSipUaHelperListener(this);
     FlutterRingtonePlayer.playRingtone();
     _startTimer();
 
-    FlutterCallkitIncoming.onEvent.listen((event) {
-      switch (event!.event) {
-        case Event.ACTION_CALL_ACCEPT:
-          print("ACTION_CALL_ACCEPT");
-          // TODO: accepted an incoming call
-          // TODO: show screen calling in Flutter
-          _handleAccept();
-          break;
-        case Event.ACTION_CALL_DECLINE:
-          print("ACTION_CALL_DECLINE");
-          _handleHangup();
-          break;
 
-      }
-    });
   }
-
+  void checkcall(){
+    print("checkcall:"+cancelcall.toString());
+      if(cancelcall)_handleHangup();
+      else _handleAccept();
+  }
   @override
   deactivate() {
     super.deactivate();
@@ -156,10 +181,12 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
         _handelStreams(callState);
         break;
       case CallStateEnum.ENDED:
+        x=0;
         _backToDialPad();
         break;
       case CallStateEnum.FAILED:
         print("有結束了2");
+        x=0;
         _backToDialPad();
         break;
       case CallStateEnum.UNMUTED:
@@ -423,7 +450,10 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
             title: "Accept",
             fillColor: Colors.green,
             icon: Icons.phone,
-            onPressed: () => _handleAccept(),
+            onPressed: (){
+              x=1;
+              _handleAccept();
+            },
           ));
           basicActions.add(hangupBtn);
         } else {
@@ -599,6 +629,7 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
 
   @override
   Widget build(BuildContext context) {
+    print("cola:yesyes");
     _toggleSpeaker();
     return Scaffold(
         appBar: AppBar(

@@ -35,6 +35,7 @@ var iscall=0;
 SIPUAHelper helper2 = SIPUAHelper();
 String whoscall="080";
 
+
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("Handling a background message");
@@ -44,6 +45,7 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("message:"+message.toString());
   print("params:" + params.toString());
   if (params['type'] == "pickUp") {
+    whoscall=params['fromHouseName'];
     UaSettings settings = UaSettings();
     settings.webSocketUrl = "ws://ip-intercom.reddotsolution.com:8080/ws";
     settings.webSocketSettings.allowBadCertificate = true;
@@ -109,6 +111,7 @@ class _MyDialPadWidget extends State<DialPadWidget>
         showchioceDialog(context);
       }
     });
+    print( widget.profile['houses'].toString());
     super.initState();
     receivedMsg = "";
     _bindEventListeners();
@@ -122,7 +125,7 @@ class _MyDialPadWidget extends State<DialPadWidget>
       print("message:"+message.toString());
       print("params:" + params.toString());
       if (params['type'] == "pickUp") {
-        whoscall="6699";
+        whoscall=params['fromHouseName'];
         getsipinfo = params;
         UaSettings settings = UaSettings();
         settings.webSocketUrl = "ws://ip-intercom.reddotsolution.com:8080/ws";
@@ -163,13 +166,7 @@ class _MyDialPadWidget extends State<DialPadWidget>
       Navigator.pushNamed(context, '/');
 
     });
-    FirebaseMessaging.onBackgroundMessage((RemoteMessage message) async{
-      print("onBackgroundMessage");
-      showCallkitIncoming(Uuid().v4());
 
-    }
-
-    );
 
 
     _firebaseMessaging.requestPermission(
@@ -600,10 +597,12 @@ class _MyDialPadWidget extends State<DialPadWidget>
                               }
                               else{
                                 Navigator.pop(context);
+                                print("heree:"+ widget.profile['houses'][index]['houseID'].toString());
                                 var get = await APIs().startcall(
                                     widget.info['token'],
                                     widget.profile['houses'][index]
                                     ['constructionId'],
+                                    widget.profile['houses'][index]['houseID'],
                                     _textController?.text);
                                 var respone = json.decode(get);
                                 if (respone['code'] != 0) {

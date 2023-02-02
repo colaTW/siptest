@@ -25,7 +25,7 @@ bool isBind = false;
 typedef PageContentBuilder = Widget Function(
     [SIPUAHelper? helper, Object? arguments]);
 dynamic getdata;
-
+var width;
 // ignore: must_be_immutable
 class sipphone extends StatefulWidget {
   dynamic data;
@@ -61,7 +61,7 @@ class _sipphone extends State<sipphone> {
     '/messagefix': ([SIPUAHelper? helper, Object? arguments]) =>
         messagefix(getdata['info']),
     '/messagelist': ([SIPUAHelper? helper, Object? arguments]) =>
-        messagelist(getdata['info']),
+        messagelist(getdata['info'],width),
     '/security': ([SIPUAHelper? helper, Object? arguments]) =>
         DialPadWidget(helper, "1", getdata['profile'], getdata['info']),
     '/bind': ([SIPUAHelper? helper, Object? arguments]) =>
@@ -88,6 +88,8 @@ class _sipphone extends State<sipphone> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    width=size.width;
     if (getdata['profile']['houses'].length > 0) {
       isBind = true;
       gowhere = "/";

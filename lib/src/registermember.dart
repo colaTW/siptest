@@ -49,7 +49,7 @@ class _registermember extends State<registermember> {
       backgroundColor: Color(0xffE6E1E0),
 
       appBar: AppBar(
-          title: Text('會員註冊'),
+          title: Text('會員註冊',style:TextStyle(color: Color(0xff133B3A))),
         backgroundColor:Color(0xffE6E1E0) ,
 
       ),

@@ -13,16 +13,15 @@ import 'package:uuid/uuid.dart';
 import '../notification.dart';
 import 'widgets/action_button.dart';
 
+var x = 0;
+var cancelcall = null;
 
-var x=0;
-var cancelcall=true;
 class CallScreenWidget extends StatefulWidget {
   final SIPUAHelper? _helper;
   final Call? _call;
   CallScreenWidget(this._helper, this._call, {Key? key}) : super(key: key);
   @override
   _MyCallScreenWidget createState() => _MyCallScreenWidget();
-
 }
 
 class _MyCallScreenWidget extends State<CallScreenWidget>
@@ -48,14 +47,13 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
 
   bool get voiceOnly =>
       (_localStream == null || _localStream!.getVideoTracks().isEmpty) &&
-      (_remoteStream == null || _remoteStream!.getVideoTracks().isEmpty);
+          (_remoteStream == null || _remoteStream!.getVideoTracks().isEmpty);
 
   String? get remoteIdentity => call!.remote_display_name;
 
   String get direction => call!.direction;
 
   Call? get call => widget._call;
-
 
   @override
   initState() {
@@ -65,16 +63,18 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
           print("cola:ACTION_CALL_ACCEPT");
           // TODO: accepted an incoming call
           // TODO: show screen calling in Flutter
-          x=0;
-          cancelcall=false;
+          x = 0;
+          cancelcall = false;
           _handleAccept();
 
           break;
         case Event.ACTION_CALL_DECLINE:
           print("cola:ACTION_CALL_DECLINE");
-          cancelcall=true;
+          cancelcall = true;
 
-          if(x==1){break;}
+          if (x == 1) {
+            break;
+          }
           _handleHangup();
           break;
         case Event.ACTION_CALL_ENDED:
@@ -82,12 +82,10 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
 
           // TODO: ended an incoming/outgoing call
           break;
-
       }
     });
-    if(Platform.isIOS){
-      WidgetsBinding.instance
-          .addPostFrameCallback((_) => checkcall());
+    if (Platform.isIOS) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => checkcall());
     }
 
     super.initState();
@@ -95,14 +93,17 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
     helper!.addSipUaHelperListener(this);
     FlutterRingtonePlayer.playRingtone();
     _startTimer();
-
-
   }
-  void checkcall(){
-    print("checkcall:"+cancelcall.toString());
-      if(cancelcall)_handleHangup();
-      else _handleAccept();
+
+  void checkcall() {
+    print("checkcall:" + cancelcall.toString());
+    if (cancelcall == null) return;
+    if (cancelcall)
+      _handleHangup();
+    else
+      _handleAccept();
   }
+
   @override
   deactivate() {
     super.deactivate();
@@ -177,16 +178,17 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
 
     switch (callState.state) {
       case CallStateEnum.STREAM:
-
         _handelStreams(callState);
         break;
       case CallStateEnum.ENDED:
-        x=0;
+        x = 0;
+        cancelcall = null;
         _backToDialPad();
         break;
       case CallStateEnum.FAILED:
         print("有結束了2");
-        x=0;
+        cancelcall = null;
+        x = 0;
         _backToDialPad();
         break;
       case CallStateEnum.UNMUTED:
@@ -281,10 +283,10 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
 
     if (kIsWeb && remoteHasVideo) {
       mediaStream =
-          await navigator.mediaDevices.getDisplayMedia(mediaConstraints);
+      await navigator.mediaDevices.getDisplayMedia(mediaConstraints);
       mediaConstraints['video'] = false;
       MediaStream userStream =
-          await navigator.mediaDevices.getUserMedia(mediaConstraints);
+      await navigator.mediaDevices.getUserMedia(mediaConstraints);
       mediaStream.addTrack(userStream.getAudioTracks()[0], addToNative: true);
     } else {
       mediaConstraints['video'] = remoteHasVideo;
@@ -410,17 +412,17 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
 
     return labels
         .map((row) => Padding(
-            padding: const EdgeInsets.all(3),
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: row
-                    .map((label) => ActionButton(
-                          title: label.keys.first,
-                          subTitle: label.values.first,
-                          onPressed: () => _handleDtmf(label.keys.first),
-                          number: true,
-                        ))
-                    .toList())))
+        padding: const EdgeInsets.all(3),
+        child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: row
+                .map((label) => ActionButton(
+              title: label.keys.first,
+              subTitle: label.values.first,
+              onPressed: () => _handleDtmf(label.keys.first),
+              number: true,
+            ))
+                .toList())))
         .toList();
   }
 
@@ -450,8 +452,9 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
             title: "Accept",
             fillColor: Colors.green,
             icon: Icons.phone,
-            onPressed: (){
-              x=1;
+            onPressed: () {
+              x = 1;
+              cancelcall = false;
               _handleAccept();
             },
           ));
@@ -592,33 +595,33 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
         right: 0,
         child: Center(
             child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Center(
-                child: Padding(
-                    padding: const EdgeInsets.all(6),
-                    child: Text(
-                      (voiceOnly ? 'VOICE CALL' : 'VIDEO CALL') +
-                          (_hold
-                              ? ' PAUSED BY ${_holdOriginator!.toUpperCase()}'
-                              : ''),
-                      style: TextStyle(fontSize: 24, color: Colors.black54),
-                    ))),
-            Center(
-                child: Padding(
-                    padding: const EdgeInsets.all(6),
-                    child: Text(
-                      '$remoteIdentity',
-                      style: TextStyle(fontSize: 18, color: Colors.black54),
-                    ))),
-            Center(
-                child: Padding(
-                    padding: const EdgeInsets.all(6),
-                    child: Text(_timeLabel,
-                        style: TextStyle(fontSize: 14, color: Colors.black54))))
-          ],
-        )),
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Center(
+                    child: Padding(
+                        padding: const EdgeInsets.all(6),
+                        child: Text(
+                          (voiceOnly ? 'VOICE CALL' : 'VIDEO CALL') +
+                              (_hold
+                                  ? ' PAUSED BY ${_holdOriginator!.toUpperCase()}'
+                                  : ''),
+                          style: TextStyle(fontSize: 24, color: Colors.black54),
+                        ))),
+                Center(
+                    child: Padding(
+                        padding: const EdgeInsets.all(6),
+                        child: Text(
+                          '$remoteIdentity',
+                          style: TextStyle(fontSize: 18, color: Colors.black54),
+                        ))),
+                Center(
+                    child: Padding(
+                        padding: const EdgeInsets.all(6),
+                        child: Text(_timeLabel,
+                            style: TextStyle(fontSize: 14, color: Colors.black54))))
+              ],
+            )),
       ),
     ]);
 

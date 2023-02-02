@@ -101,7 +101,7 @@ class _HomePage extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        child: Text('V1.0.6'),
+        child: Text('V1.0.7'),
         onPressed: null,
         backgroundColor: Colors.grey,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(14.0))),
@@ -110,7 +110,7 @@ class _HomePage extends State<HomePage> {
       backgroundColor: Color(0xffE6E1E0),
       appBar: AppBar(
         backgroundColor: Color(0xffE6E1E0),
-        title: Text("首頁"),
+        title: Text("首頁",style:TextStyle(color: Color(0xff133B3A)),),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,

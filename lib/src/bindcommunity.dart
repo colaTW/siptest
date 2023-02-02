@@ -41,7 +41,7 @@ class _bindcommunity extends State<bindcommunity> {
         backgroundColor: Color(0xffE6E1E0),
         appBar: AppBar(
           backgroundColor: Color(0xffE6E1E0),
-          title: Text('綁定住戶'),
+          title: Text('綁定住戶',style:TextStyle(color: Color(0xff133B3A)),),
           actions: [],
         ),
         body: Container(

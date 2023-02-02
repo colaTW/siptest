@@ -12,7 +12,8 @@ import 'APIs.dart';
 
 class messagelist extends StatefulWidget {
   dynamic info;
-  messagelist(this.info,{Key key}) : super(key: key);
+  var width;
+  messagelist(this.info,this.width,{Key key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -81,8 +82,8 @@ class _messagelist extends State<messagelist>{
         goinfo.page=re['currentPage'];
         goinfo.deal_img1 = ['', '', '', '', ''];
         goinfo.handler_img1 = ['', '', '', '', ''];
-
         totalpage1 = re['totalPages'];
+        goinfo.createManager=re['projectLists'][i]['createManager'].length;
         goinfo.hadlerlength=re['projectLists'][i]['handlers'].length;
         if (re['projectLists'][i]['handlers'].length > 0) {
           goinfo.deal_onsite = re['projectLists'][i]['handlers'][0]['onSite'];
@@ -120,99 +121,57 @@ class _messagelist extends State<messagelist>{
       else{
         cardcolor=Colors.white;
       }*/
-      if(list[i].hadlerlength>0){
-        listItems.add(Container(
-            margin: const EdgeInsets.only(bottom:60 ),
-            decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(20.0)), color: cardcolor, boxShadow: [
-              BoxShadow(color: Colors.black.withAlpha(100), blurRadius: 10.0),
-            ]),
+    /*  if(list[i].hadlerlength>0){
+        listItems.add(Container
+          (
+          decoration: BoxDecoration(
+              border:Border(bottom:BorderSide(width: 2,color:Colors.grey) )),
+            margin: const EdgeInsets.only(bottom:10 ),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  Text( list[i].deal_onsiteat),
-                  Text( list[i].handler_message),
-                  ElevatedButton(
+                Container(width: widget.width/10*3,child: Flexible(child: new Text(list[i].deal_onsiteat,softWrap: false,overflow: TextOverflow.ellipsis,maxLines: 4,textAlign: TextAlign.left),)),
+
+                  list[i].hadlerlength==0?list[i].createManager==0?Container(width: widget.width/10,child:Text("")):Container(width: widget.width/10,child: ImageIcon(AssetImage("assets/images/p21.png"))):Container(width: widget.width/10,child: ImageIcon(AssetImage("assets/images/p20.png"))),
+                  Container(width: widget.width/10*3,child: Flexible(child: new Text(list[i].handler_message,softWrap: false,overflow: TextOverflow.ellipsis,maxLines: 4,textAlign: TextAlign.left),)),
+                  IconButton(
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Color(0xff7588FA)),
                       onPressed: (){
                     showdetailDialog(context,list[i]);
-                  }, child:Text("詳細資料")),
+                  }, icon:Image.asset("assets/images/p19.png"),iconSize: 50,),
                 ],
               ),
             )));
-      }
+      }*/
 
-     /*listItems.add(Container(
-          margin: const EdgeInsets.only(bottom:60 ),
-          decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(20.0)), color: cardcolor, boxShadow: [
-            BoxShadow(color: Colors.black.withAlpha(100), blurRadius: 10.0),
-          ]),
+     listItems.add(Container(
+          margin: const EdgeInsets.only(bottom:10 ),
+         decoration: BoxDecoration(
+             border:Border(bottom:BorderSide(width: 2,color:Colors.grey) )),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    list[i].deal_name==null?Text(""): Text(
-                      list[i].deal_name+'\n ',
-                      style: const TextStyle(fontSize: 12, color: Colors.black),
 
-                    ),
-                    Text(''),
-                    list[i].deal_type==null?Text(""): Text(
-                      list[i].deal_type,
-                      style: const TextStyle(fontSize: 12, color: Colors.black),
+                list[i].deal_newdate==null?Text(""):Container(width: widget.width/10*3,child: Flexible(child: new Text(list[i].deal_newdate,softWrap: false,overflow: TextOverflow.ellipsis,maxLines: 4,textAlign: TextAlign.left),)),
 
-                    ),
-                  ],
-                ),
-               SizedBox(width: 10,),
-               Expanded(child:  Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    /*list[i].deal_case==null?Text(""):Text(
-                      list[i].deal_case,
-                      style: const TextStyle(fontSize: 12, color: Colors.black),
+                list[i].hadlerlength==0?list[i].createManager==0?Container(width: widget.width/10,child:Text("")):Container(width: widget.width/10,child: Image.asset("assets/images/p20.png")):Container(width: widget.width/10,child: Image.asset("assets/images/p21.png")),
+                list[i].deal_messg==null?Text(""): Container(width: widget.width/10*3,child: Flexible(child: new Text(list[i].deal_messg,softWrap: false,overflow: TextOverflow.ellipsis,maxLines: 4,textAlign: TextAlign.left),)),
 
-                    ),*/
-                  /*  list[i].deal_phone==null?Text(""):Text(
-                      list[i].deal_phone,
-                      style: const TextStyle(fontSize: 12, color: Colors.black),
-                    ),*/
-                  /*  list[i].Warranty==false?Text(""):Text(
-                      "***過保***",
-                      style: const TextStyle(fontSize: 12, color: Colors.red),
-                    ),*/
-                    list[i].deal_messg==null?Text(""):Text(list[i].deal_messg,maxLines: 2,overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 12,color:Colors.black,
-                      ),),
-                    Text(''),
-                    list[i].deal_status==null?Text(""):Text(
-                      list[i].deal_status,
-                      style: const TextStyle(fontSize: 12, color: Colors.black),
 
-                    ),
-
-                    list[i].deal_newdate==null?Text(""): Text(
-                      list[i].deal_newdate,
-                      style: const TextStyle(fontSize: 12, color: Colors.black),
-
-                    ),
-                    ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xff7588FA)),
-                        onPressed: (){
-                      showdetailDialog(context,list[i]);
-                    }, child:Text("詳細資料")),
-                  ],)),
+                IconButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xff7588FA)),
+                  onPressed: (){
+                    showdetailDialog(context,list[i]);
+                  }, icon:Image.asset("assets/images/p19.png"),iconSize: 50,),
               ],
             ),
-          )));*/
+          )));
     };
     if(mins==0){
       setState(() {
@@ -238,14 +197,15 @@ class _messagelist extends State<messagelist>{
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xffE6E1E0),
-        title: Text("回饋 提醒"),
-        actions: [ElevatedButton(
+        title: Text("回饋 提醒",style:TextStyle(color: Color(0xff133B3A))),
+        actions: [          
+          IconButton(
             style: ElevatedButton.styleFrom(
                 backgroundColor: Color(0xff7588FA)
             ),
             onPressed: (){
           Navigator.pushNamed(context, '/messagefix');
-        }, child: Text('新增意見'))],
+        }, icon: Image.asset("assets/images/p18.png"),iconSize: 50,)],
       ),
       body:
       Container(
@@ -265,7 +225,7 @@ class _messagelist extends State<messagelist>{
                     Column(
                       children: [
 
-                        Row(children: <Widget>[
+                        /*Row(children: <Widget>[
                           HandlerTypes!=null? new Expanded(
                               child: new DropdownButton<dynamic>(
                                 isExpanded: true,
@@ -305,7 +265,7 @@ class _messagelist extends State<messagelist>{
                                 }
                               })),
                         ],
-                        ),
+                        ),*/
                       ],
                     ))),
             SizedBox(height: 10,),
@@ -433,6 +393,7 @@ class ItemInfo {
   var deal_img1;
   var handler_img1;
   var Warranty;
+  var createManager;
   String memos;
   String handler_message;
   String housename;
@@ -466,6 +427,7 @@ class ItemInfo {
     this.hadlerlength,
     this.handler_img1,
     this.handler_createManagerName,
+    this.createManager,
 
   });
 }
@@ -494,46 +456,60 @@ void showdetailDialog(BuildContext context,var show) {
           SingleChildScrollView(child:
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment:MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              show.deal_name==null?Text(""):new Text('回覆人員:\n'+show.handler_createManagerName,style:TextStyle(height: 1.5)),
-              SizedBox(height: 15,),
-              show.handler_message==null?Text(''): new Text('處理狀況:\n'+show.handler_message),
-              SizedBox(height: 15,),
 
-              new Text('回覆照片:'),
-              new Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  show.handler_img1[0]==''?Text(''): Expanded(child:GestureDetector(child:new Image(image: NetworkImage(show.handler_img1[0]),)
-                    ,onTap: (){
-                      showImageDialog(context, show.handler_img1[0]);
-                    },)),
-                  SizedBox(width: 5,),
-                  show.handler_img1[1]==''?Text(''): Expanded(child:GestureDetector(child:new Image(image: NetworkImage(show.handler_img1[1]),)
-                    ,onTap: (){
-                      showImageDialog(context, show.handler_img1[1]);
-                    },)),
-                  SizedBox(width: 5,),
-                  show.handler_img1[2]==''?Text(''):Expanded(child:GestureDetector(child:new Image(image: NetworkImage(show.handler_img1[2]),)
-                    ,onTap: (){
-                      showImageDialog(context, show.handler_img1[2]);
-                    },)),
-                  SizedBox(width: 5,),
-                  show.handler_img1[3]==''?Text(''): Expanded(child:GestureDetector(child:new Image(image: NetworkImage(show.handler_img1[3]),)
-                    ,onTap: (){
-                      showImageDialog(context, show.handler_img1[3]);
-                    },)),
-                  SizedBox(width: 5,),
-                  show.handler_img1[4]==''?Text(''):Expanded(child:GestureDetector(child:new Image(image: NetworkImage(show.handler_img1[4]),)
-                    ,onTap: (){
-                      showImageDialog(context, show.handler_img1[4]);
-                    },)),
-                ],),
+            children: <Widget>[
+              Text("我的意見:"+show.deal_messg),
+              Container(width: double.infinity,child:
+              DecoratedBox(
+                decoration:BoxDecoration(
+                    border:Border.all(color: Colors.grey,width: 1.0)
+                ),
+              )),
+              SizedBox(height: 10,),
+
+              show.hadlerlength==0?Text("尚未回覆"):Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment:MainAxisAlignment.spaceEvenly,
+                children: [
+                  show.deal_name==null?Text(""):new Text('回覆人員:\n'+show.handler_createManagerName,style:TextStyle(height: 1.5)),
+                  SizedBox(height: 15,),
+                  show.handler_message==null?Text(''): new Text('回覆訊息:\n'+show.handler_message),
+                  SizedBox(height: 15,),
+                  new Text('回覆照片:'),
+                  new Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      show.handler_img1[0]==''?Text(''): Expanded(child:GestureDetector(child:new Image(image: NetworkImage(show.handler_img1[0]),)
+                        ,onTap: (){
+                          showImageDialog(context, show.handler_img1[0]);
+                        },)),
+                      SizedBox(width: 5,),
+                      show.handler_img1[1]==''?Text(''): Expanded(child:GestureDetector(child:new Image(image: NetworkImage(show.handler_img1[1]),)
+                        ,onTap: (){
+                          showImageDialog(context, show.handler_img1[1]);
+                        },)),
+                      SizedBox(width: 5,),
+                      show.handler_img1[2]==''?Text(''):Expanded(child:GestureDetector(child:new Image(image: NetworkImage(show.handler_img1[2]),)
+                        ,onTap: (){
+                          showImageDialog(context, show.handler_img1[2]);
+                        },)),
+                      SizedBox(width: 5,),
+                      show.handler_img1[3]==''?Text(''): Expanded(child:GestureDetector(child:new Image(image: NetworkImage(show.handler_img1[3]),)
+                        ,onTap: (){
+                          showImageDialog(context, show.handler_img1[3]);
+                        },)),
+                      SizedBox(width: 5,),
+                      show.handler_img1[4]==''?Text(''):Expanded(child:GestureDetector(child:new Image(image: NetworkImage(show.handler_img1[4]),)
+                        ,onTap: (){
+                          showImageDialog(context, show.handler_img1[4]);
+                        },)),
+                    ],),
+                ],
+              ),
+
               //show.memos==null?Text('保固備註:\n'):new Text('保固備註:\n'+show.memos),
 
               SizedBox(height: 15,),
-
 
               //new Row(
               //  mainAxisAlignment: MainAxisAlignment.spaceEvenly,

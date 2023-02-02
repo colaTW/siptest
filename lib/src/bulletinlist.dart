@@ -42,7 +42,7 @@ class _bulletinlist extends State<bulletinlist> {
     return new Scaffold(
         backgroundColor: Color(0xffE6E1E0),
         appBar: new AppBar(
-            title: new Text("社區公告"),
+            title: new Text("社區公告",style:TextStyle(color: Color(0xff133B3A)),),
             backgroundColor:Color(0xffE6E1E0) ,
         ),
         body: Column(children: [

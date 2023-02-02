@@ -52,7 +52,7 @@ class _messagefix extends State<messagefix> {
         backgroundColor: Color(0xffE6E1E0),
 
         appBar: AppBar(
-          title: Text('新增意見'),
+          title: Text('新增意見',style:TextStyle(color: Color(0xff133B3A))),
           backgroundColor:Color(0xffE6E1E0) ,
 
         ),
@@ -60,10 +60,13 @@ class _messagefix extends State<messagefix> {
           child:Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
+            SizedBox(height: 10,),
             Row(children: [
+              Padding(padding: EdgeInsets.all(20),child:
               Image.asset("assets/images/01.png"),
+              )
             ],),
-            Padding(padding: EdgeInsets.all(10),child:Container(
+            Padding(padding: EdgeInsets.all(20),child:Container(
               decoration:DashDecoration(
                   pointWidth: 20,
                   step: 3,
@@ -84,7 +87,8 @@ class _messagefix extends State<messagefix> {
               ),
             ), ),
 
-            myhouses!=null?Row(children: [
+            myhouses!=null?
+            Padding(padding: EdgeInsets.all(20),child:Row(children: [
              Image.asset("assets/images/02.png"),
               new Expanded(child:
               new Container(color:Colors.white,
@@ -106,11 +110,12 @@ class _messagefix extends State<messagefix> {
                   value: chiocehouse,
                 )),)),
               SizedBox(width: 10,)
-            ],):Text(""),
+            ],)):Text(""),
             SizedBox(height: 10,),
 
             Row(children: [
-              Image.asset("assets/images/03.png")
+              Padding(padding: EdgeInsets.all(20),child:
+              Image.asset("assets/images/03.png"))
             ],),
             Row(
               children: <Widget>[

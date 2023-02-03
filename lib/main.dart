@@ -101,7 +101,7 @@ class _HomePage extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        child: Text('V1.0.7'),
+        child: Text('V1.0.8'),
         onPressed: null,
         backgroundColor: Colors.grey,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(14.0))),
@@ -158,6 +158,9 @@ class _HomePage extends State<HomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xffE6E1E0)
+                  ),
                   onPressed: isDisable
                       ? null
                       : () async {
@@ -195,17 +198,31 @@ class _HomePage extends State<HomePage> {
                             });
                           }
                         },
-                  child: Text('登入')),
-              GestureDetector(
-                child: Text(
-                  "|註冊會員",
-                  style: TextStyle(color: Colors.blue),
+                  child: Text('登入',
+                  style: TextStyle(color: Color(0xff7587F9)),
+                  )),
+              Text("  |  ",
+                style: TextStyle(color: Color(0xff7587F9)),),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xffE6E1E0)
                 ),
-                onTap: () {
+                child: Text(
+                  "註冊會員",
+                  style: TextStyle(color: Color(0xff7587F9)),
+                ),
+                onPressed: isDisable? null
+                    : () async{
+                  setState(() {
+                    isDisable = true;
+                  });
                   Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => registermember()));
+                  setState(() {
+                    isDisable = false;
+                  });
                 },
               )
             ],

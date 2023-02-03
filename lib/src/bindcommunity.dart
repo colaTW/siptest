@@ -40,11 +40,15 @@ class _bindcommunity extends State<bindcommunity> {
     return Scaffold(
         backgroundColor: Color(0xffE6E1E0),
         appBar: AppBar(
+          iconTheme: IconThemeData(
+              color: Colors.black
+          ),
           backgroundColor: Color(0xffE6E1E0),
           title: Text('綁定住戶',style:TextStyle(color: Color(0xff133B3A)),),
           actions: [],
         ),
         body: Container(
+          padding: EdgeInsets.all(20),
           height: height,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -61,7 +65,11 @@ class _bindcommunity extends State<bindcommunity> {
                     ),
                   ),
                 ),
-                ElevatedButton(onPressed: () async{
+                ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xffE6E1E0)
+                    ),
+                    onPressed: () async{
                   String get;
                   get = await APIs().getconstructioninfo(constructionCode.text.toString());
                   var info = json.decode(get);
@@ -87,7 +95,9 @@ class _bindcommunity extends State<bindcommunity> {
                   }
 
 
-                }, child: Text("搜尋"))
+                }, child: Text("搜尋",
+                  style: TextStyle(color: Color(0xff7587F9)),
+                ))
               ],),
               houseinfo==null?Text(""):
                   Row(children: [
@@ -123,6 +133,9 @@ class _bindcommunity extends State<bindcommunity> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xffE6E1E0)
+                      ),
                       onPressed: () async {
                         String get;
                         get = await APIs().bindcommunity(widget.info['token'],
@@ -149,13 +162,18 @@ class _bindcommunity extends State<bindcommunity> {
                               fontSize: 16.0);
                         }
                       },
-                      child: Text("確定"))
+                      child: Text("　確定　",
+                        style: TextStyle(color: Color(0xff7587F9)),))
                 ],
               ),
-              ElevatedButton(style: ButtonStyle(backgroundColor:MaterialStateProperty.all(Colors.red) ),
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xffE6E1E0)
+                  ),
                   onPressed: (){
                     deleteaccountDialog(context);
-                  }, child:Text ("刪除此帳戶"))
+                  }, child:Text ("刪除帳戶",
+                style: TextStyle(color: Color(0xff7587F9)),))
             ],
           ),
         ));

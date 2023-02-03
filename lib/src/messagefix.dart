@@ -52,6 +52,9 @@ class _messagefix extends State<messagefix> {
         backgroundColor: Color(0xffE6E1E0),
 
         appBar: AppBar(
+          iconTheme: IconThemeData(
+            color: Colors.black
+          ),
           title: Text('新增意見',style:TextStyle(color: Color(0xff133B3A))),
           backgroundColor:Color(0xffE6E1E0) ,
 
@@ -86,7 +89,7 @@ class _messagefix extends State<messagefix> {
                 ),
               ),
             ), ),
-
+            SizedBox(height: 70,),
             myhouses!=null?
             Padding(padding: EdgeInsets.all(20),child:Row(children: [
              Image.asset("assets/images/02.png"),
@@ -360,6 +363,7 @@ class _messagefix extends State<messagefix> {
               DialogButton(onPressed: (){
                 Navigator.of(context, rootNavigator: true).pop();
                 Navigator.pop(context);
+
 
               }, child: Text('確認'))
             ]

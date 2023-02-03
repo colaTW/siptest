@@ -50,6 +50,9 @@ class _HomeWidget extends State<HomeWidget> {
     return Scaffold(
       backgroundColor: Color(0xffE6E1E0),
       appBar: AppBar(
+        iconTheme: IconThemeData(
+            color: Colors.black
+        ),
         leadingWidth: 20, //<-- Use this
         centerTitle: false,
         leading: new IconButton(

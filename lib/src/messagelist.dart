@@ -157,10 +157,10 @@ class _messagelist extends State<messagelist>{
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
 
-                list[i].deal_newdate==null?Text(""):Container(width: widget.width/10*3,child: Flexible(child: new Text(list[i].deal_newdate,softWrap: false,overflow: TextOverflow.ellipsis,maxLines: 4,textAlign: TextAlign.left),)),
+                list[i].deal_newdate==null?Text(""):Container(width: widget.width/10*3,child: new Text(list[i].deal_newdate,softWrap: false,overflow: TextOverflow.ellipsis,maxLines: 4,textAlign: TextAlign.left),),
 
                 list[i].hadlerlength==0?list[i].createManager==0?Container(width: widget.width/10,child:Text("")):Container(width: widget.width/10,child: Image.asset("assets/images/p20.png")):Container(width: widget.width/10,child: Image.asset("assets/images/p21.png")),
-                list[i].deal_messg==null?Text(""): Container(width: widget.width/10*3,child: Flexible(child: new Text(list[i].deal_messg,softWrap: false,overflow: TextOverflow.ellipsis,maxLines: 4,textAlign: TextAlign.left),)),
+                list[i].deal_messg==null?Text(""): Container(width: widget.width/10*3,child: new Text(list[i].deal_messg,softWrap: false,overflow: TextOverflow.ellipsis,maxLines: 4,textAlign: TextAlign.left),),
 
 
                 IconButton(
@@ -196,6 +196,9 @@ class _messagelist extends State<messagelist>{
     final height = size.height;
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(
+            color: Colors.black
+        ),
         backgroundColor: Color(0xffE6E1E0),
         title: Text("回饋 提醒",style:TextStyle(color: Color(0xff133B3A))),
         actions: [          
@@ -203,8 +206,14 @@ class _messagelist extends State<messagelist>{
             style: ElevatedButton.styleFrom(
                 backgroundColor: Color(0xff7588FA)
             ),
-            onPressed: (){
-          Navigator.pushNamed(context, '/messagefix');
+            onPressed: ()async{
+              dynamic result = await Navigator.pushNamed(context, '/messagefix');
+              print("getresult"+result.toString());
+              if(result==null){
+                itemsData.clear();
+                getlist(0);
+              }
+
         }, icon: Image.asset("assets/images/p18.png"),iconSize: 50,)],
       ),
       body:

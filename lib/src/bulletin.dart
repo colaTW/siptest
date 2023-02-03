@@ -25,6 +25,9 @@ var totalpage=3;
     return new Scaffold(
         backgroundColor: Color(0xffE6E1E0),
         appBar: new AppBar(
+          iconTheme: IconThemeData(
+              color: Colors.black
+          ),
             title: new Text("社區公告",style:TextStyle(color: Color(0xff133B3A)),),
             backgroundColor:Color(0xffE6E1E0) ,),
 

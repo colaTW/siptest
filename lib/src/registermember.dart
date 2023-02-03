@@ -47,8 +47,10 @@ class _registermember extends State<registermember> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xffE6E1E0),
-
       appBar: AppBar(
+        iconTheme: IconThemeData(
+            color: Colors.black
+        ),
           title: Text('會員註冊',style:TextStyle(color: Color(0xff133B3A))),
         backgroundColor:Color(0xffE6E1E0) ,
 

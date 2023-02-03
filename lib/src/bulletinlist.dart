@@ -42,6 +42,9 @@ class _bulletinlist extends State<bulletinlist> {
     return new Scaffold(
         backgroundColor: Color(0xffE6E1E0),
         appBar: new AppBar(
+          iconTheme: IconThemeData(
+              color: Colors.black
+          ),
             title: new Text("社區公告",style:TextStyle(color: Color(0xff133B3A)),),
             backgroundColor:Color(0xffE6E1E0) ,
         ),
@@ -82,9 +85,9 @@ class _bulletinlist extends State<bulletinlist> {
                     child: new Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Container(width: width*2,child: Flexible(child: new Text(bulletinlistdata[index]['bulletinTitle'],softWrap: false,overflow: TextOverflow.ellipsis,maxLines: 4,textAlign: TextAlign.left),),
+                        Container(width: width*2,child:  new Text(bulletinlistdata[index]['bulletinTitle'],softWrap: false,overflow: TextOverflow.ellipsis,maxLines: 4,textAlign: TextAlign.left),
                             ),
-                        Container(width: width*5,child:Flexible(child: new Text(bulletinlistdata[index]['bulletinContent'],softWrap: false,overflow: TextOverflow.ellipsis,maxLines: 4,textAlign: TextAlign.left,),),
+                        Container(width: width*5,child: new Text(bulletinlistdata[index]['bulletinContent'],softWrap: false,overflow: TextOverflow.ellipsis,maxLines: 4,textAlign: TextAlign.left,),
                             ),
                         Container(child: ElevatedButton(
                           style: ElevatedButton.styleFrom(

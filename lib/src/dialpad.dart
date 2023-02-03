@@ -374,7 +374,7 @@ class _MyDialPadWidget extends State<DialPadWidget>
             child: IgnorePointer(
                 ignoring:
                     true, // You can make this a variable in other toggle True or False
-                child: Text('Reddot sip')),
+                child: Text('Reddot sip',style:TextStyle(color: Color(0xff133B3A)),)),
           ),
           actions: <Widget>[
             PopupMenuButton<String>(

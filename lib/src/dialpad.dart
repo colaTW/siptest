@@ -47,7 +47,7 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   if (params['type'] == "pickUp") {
     whoscall=params['fromHouseName'];
     UaSettings settings = UaSettings();
-    settings.webSocketUrl = "ws://ip-intercom.reddotsolution.com:8080/ws";
+    settings.webSocketUrl = "wss://ip-intercom.reddotsolution.com:4443/ws";
     settings.webSocketSettings.allowBadCertificate = true;
     //settings.webSocketSettings.userAgent = 'Dart/2.8 (dart:io) for OpenSIPS.';
     settings.uri =
@@ -128,7 +128,7 @@ class _MyDialPadWidget extends State<DialPadWidget>
         whoscall=params['fromHouseName'];
         getsipinfo = params;
         UaSettings settings = UaSettings();
-        settings.webSocketUrl = "ws://ip-intercom.reddotsolution.com:8080/ws";
+        settings.webSocketUrl = "wss://ip-intercom.reddotsolution.com:4443/ws";
         settings.webSocketSettings.allowBadCertificate = true;
         //settings.webSocketSettings.userAgent = 'Dart/2.8 (dart:io) for OpenSIPS.';
         settings.uri =
@@ -376,7 +376,7 @@ class _MyDialPadWidget extends State<DialPadWidget>
                     true, // You can make this a variable in other toggle True or False
                 child: Text('Reddot sip',style:TextStyle(color: Color(0xff133B3A)),)),
           ),
-          actions: <Widget>[
+        /*  actions: <Widget>[
             PopupMenuButton<String>(
                 onSelected: (String value) {
                   switch (value) {
@@ -428,7 +428,7 @@ class _MyDialPadWidget extends State<DialPadWidget>
                         value: 'about',
                       )
                     ]),
-          ],
+          ],*/
         ),
         body: Align(
             alignment: Alignment(0, 0),
@@ -567,7 +567,7 @@ class _MyDialPadWidget extends State<DialPadWidget>
                               nowwho = widget.profile['houses'][index];
                               UaSettings settings = UaSettings();
                               settings.webSocketUrl =
-                                  "ws://ip-intercom.reddotsolution.com:8080/ws";
+                                  "wss://ip-intercom.reddotsolution.com:4443/ws";
                               settings.webSocketSettings.allowBadCertificate =
                                   true;
                               //settings.webSocketSettings.userAgent = 'Dart/2.8 (dart:io) for OpenSIPS.';

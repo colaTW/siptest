@@ -101,7 +101,7 @@ class _HomePage extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        child: Text('V1.0.8'),
+        child: Text('V1.0.9'),
         onPressed: null,
         backgroundColor: Colors.grey,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(14.0))),

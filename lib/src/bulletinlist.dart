@@ -29,9 +29,9 @@ class _bulletinlist extends State<bulletinlist> {
 
   @override
   void initState() {
-   myhouses=widget.profile['houses'];
-   getbulltinlist(widget.profile['houses'][0]['constructionId'],"1");
-   chiocehouse=widget.profile['houses'][0];
+   myhouses=widget.profile['constructions'];
+   getbulltinlist(widget.profile['constructions'][0]['constructionId'],"1");
+   chiocehouse=widget.profile['constructions'][0];
   }
 
   @override
@@ -58,7 +58,7 @@ class _bulletinlist extends State<bulletinlist> {
                 hint:Center(child: Text('－－請選擇住戶－－',textAlign: TextAlign.center)),
                 items:myhouses.map<DropdownMenuItem<dynamic>>((item) {
                   return new DropdownMenuItem<dynamic>(
-                    child: Center(child:new Text(item['constructionName']+item['houseName'])),
+                    child: Center(child:new Text(item['constructionName'])),
                     value: item,
                   );
                 }).toList(),

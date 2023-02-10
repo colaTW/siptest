@@ -5,6 +5,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class APIs {
   var url = 'ip-intercom.reddotsolution.com';
+  var path='/app/api';
+  //var url = 'community.edwardforce.tw/api';
+//  var path='api'
 
   getbanner() async {
     var uri = Uri.https(
@@ -35,7 +38,7 @@ class APIs {
     }
     params["Authorization"] = ":Bearer " + token;
     params["Content-Type"] = "application/json";
-    var uri = Uri.https(url, '/app/api/member/project/one', body);
+    var uri = Uri.https(url, path+'/member/project/one', body);
     print(body);
     var client = http.Client();
     var response = await client.get(uri, headers: params);
@@ -52,7 +55,7 @@ class APIs {
     body['constructionId'] =constructionId.toString();
     params["Authorization"] = ":Bearer " + token;
     params["Content-Type"] = "application/json";
-    var uri = Uri.https(url, '/app/api/member/bulletin/list', body);
+    var uri = Uri.https(url, path+'/member/bulletin/list', body);
     print(body);
     var client = http.Client();
     var response = await client.get(uri, headers: params);
@@ -70,7 +73,7 @@ class APIs {
     var body = json.encode(params);
     var client = http.Client();
     print(body);
-    var uri = Uri.https(url, '/app/api/member/user/login');
+    var uri = Uri.https(url, path+'/member/user/login');
     var response = await client.post(uri, body: body, headers: header);
     print(response.body);
     return (response.body);
@@ -113,7 +116,7 @@ class APIs {
     params["mobileNotifyToken"] = mobileNotifyToken;
     var body = json.encode(params);
     var client = http.Client();
-    var uri = Uri.https(url, '/app/api/member/user/register');
+    var uri = Uri.https(url, path+'/member/user/register');
     var response = await client.post(uri, body: body, headers: header);
     print(response.body);
     return (response.body);
@@ -128,7 +131,7 @@ class APIs {
 
     print(body);
     var client = http.Client();
-    var uri = Uri.https(url, '/app/api/member/project/image/one');
+    var uri = Uri.https(url, path+'/member/project/image/one');
     var response = await client.post(uri, headers: params, body: body);
     print("body" + response.body);
     return (response.body);
@@ -141,7 +144,7 @@ class APIs {
     var client = http.Client();
     var body = json.encode(info);
     print(body);
-    var uri = Uri.https(url, '/app/api/manager/project/handler/one');
+    var uri = Uri.https(url, path+'/manager/project/handler/one');
     var response = await client.post(uri, body: body, headers: params);
     print("here" + response.body);
     return (response.body);
@@ -153,7 +156,7 @@ class APIs {
     var client = http.Client();
     var body = json.encode(info);
     print(body);
-    var uri = Uri.https(url, '/app/api/member/project/one');
+    var uri = Uri.https(url, path+'/member/project/one');
     var response = await client.post(uri, body: body, headers: params);
     print("here" + response.body);
     return (response.body);
@@ -166,7 +169,7 @@ class APIs {
     body['hourseId'] = houseID.toString();
     var client = http.Client();
     print(body);
-    var uri = Uri.https(url, '/app/api/member/user/bind/house');
+    var uri = Uri.https(url, path+'/member/user/bind/house');
     var response = await client.post(uri, body: body, headers: params);
     print("here" + response.body);
     return (response.body);
@@ -179,7 +182,7 @@ class APIs {
     var uri = Uri.https(url, '/app/api/member/user/profile');
     var client = http.Client();
     var response = await client.get(uri, headers: params);
-    // print(response.body);
+     print(response.body);
     return (response.body);
   }
   getcategorylist(var tk) async {

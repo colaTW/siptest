@@ -26,6 +26,8 @@ typedef PageContentBuilder = Widget Function(
     [SIPUAHelper? helper, Object? arguments]);
 dynamic getdata;
 var width;
+SIPUAHelper _helper = SIPUAHelper();
+
 // ignore: must_be_immutable
 class sipphone extends StatefulWidget {
   dynamic data;
@@ -42,9 +44,11 @@ class _sipphone extends State<sipphone> {
   @override
   void initState() {
     getdata = widget.data;
+    _helper = widget.data['siphelp'];
+
   }
 
-  SIPUAHelper _helper = SIPUAHelper();
+
   Map<String, PageContentBuilder> routes = {
     '/': ([SIPUAHelper? helper, Object? arguments]) =>
         DialPadWidget(helper, "", getdata['profile'], getdata['info']),
@@ -65,7 +69,7 @@ class _sipphone extends State<sipphone> {
     '/security': ([SIPUAHelper? helper, Object? arguments]) =>
         DialPadWidget(helper, "1", getdata['profile'], getdata['info']),
     '/bind': ([SIPUAHelper? helper, Object? arguments]) =>
-        bindcommunity(getdata['info']),
+        bindcommunity(getdata['info'], getdata['profile']),
   };
 
   Route<dynamic>? _onGenerateRoute(RouteSettings settings) {

@@ -8,8 +8,12 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart'
     show debugDefaultTargetPlatformOverride;
 import 'package:flutter/material.dart';
+import 'package:flutter_callkit_incoming/entities/call_kit_params.dart';
+import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sip_ua/sip_ua.dart';
+import 'package:uuid/uuid.dart';
 
 import 'src/about.dart';
 import 'src/callscreen.dart';
@@ -20,6 +24,7 @@ import 'src/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 TextEditingController DomainIP = new TextEditingController();
+SIPUAHelper _helper = SIPUAHelper();
 
 
 void main() async {
@@ -28,8 +33,51 @@ void main() async {
   }
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+    RemoteNotification notification =
+    message.notification as RemoteNotification;
+    Map<String, dynamic> params = message.data;
+    print("message:"+message.toString());
+    print("params:" + params.toString());
+    showCallkitIncoming(Uuid().v4());
+
+    /* if (params['type'] == "pickUp") {
+      whoscall=params['fromHouseName'];
+      getsipinfo = params;
+      UaSettings settings = UaSettings();
+      settings.webSocketUrl = "wss://ip-intercom.reddotsolution.com:4443/ws";
+      settings.webSocketSettings.allowBadCertificate = true;
+      //settings.webSocketSettings.userAgent = 'Dart/2.8 (dart:io) for OpenSIPS.';
+      settings.uri =
+          params['targetSipName'] + "@ip-intercom.reddotsolution.com";
+      settings.authorizationUser = params['targetSipName'];
+      settings.password = params['targetSipPassword'];
+      settings.displayName = params['targetSipName'];
+      settings.userAgent = 'Dart SIP Client v1.0.0';
+      settings.dtmfMode = DtmfMode.RFC2833;
+      print("setting:" + settings.webSocketUrl.toString());
+      helper!.start(settings);
+      var rng = Random();
+      sleep(Duration(milliseconds:rng.nextInt(5)*100));
+      var get = await APIs().answercall(widget.info['token'],
+          getsipinfo['fromId'], getsipinfo['targetSipId'],params['fromType']);
+      var respone = json.decode(get);
+      print("colarespone" + respone.toString());
+    }*/
 
 
+  });
+  _firebaseMessaging.requestPermission(
+    alert: true,
+    announcement: false,
+    badge: true,
+    carPlay: false,
+    criticalAlert: false,
+    provisional: false,
+    sound: true,
+  );
   runApp(MyApp());
 }
 
@@ -59,6 +107,21 @@ class MyApp extends StatelessWidget {
         }
       },
     );
+  }
+  Future<void> showCallkitIncoming(String uuid) async {
+    final params = CallKitParams(
+      id: uuid,
+      nameCaller: whoscall+' 來電',
+      appName: 'Callkit',
+      type: 0,
+      duration: 30000,
+      textMissedCall: 'Missed call',
+      textCallback: 'Call back',
+      extra: <String, dynamic>{'userId': '1a2b3c4d'},
+      headers: <String, dynamic>{'apiKey': 'Abc@123!', 'platform': 'flutter'},
+    );
+    await FlutterCallkitIncoming.showCallkitIncoming(params);
+
   }
 }
 
@@ -93,7 +156,7 @@ class _HomePage extends State<HomePage> {
   bool isDisable = false;
   @override
   void initState() {
-    loadlogininfo();
+    //loadlogininfo();
     super.initState();
   }
 
@@ -101,7 +164,7 @@ class _HomePage extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        child: Text('V1.0.9'),
+        child: Text('V1.0.10'),
         onPressed: null,
         backgroundColor: Colors.grey,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(14.0))),
@@ -178,16 +241,19 @@ class _HomePage extends State<HomePage> {
                               await prefs.setString("username", login.text);
                               await prefs.setString("password", password.text);
                               await prefs.setBool("remeber", remeber);
+                              await prefs.setString("token",info['token']);
                             }
                             get = await APIs().getmemberprofile(info['token']);
                             var profile = json.decode(get);
+                            profile=profile['data'];
 
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => sipphone(data: {
                                           'info': info,
-                                          'profile': profile
+                                          'profile': profile,
+                                          'siphelp':_helper
                                         })));
                           } else {
                             loginfailDialog(context, info['message']);
@@ -237,10 +303,36 @@ class _HomePage extends State<HomePage> {
     String getlogin = await prefs.getString('username') ?? "";
     String getpassword = await prefs.getString('password') ?? "";
     bool getremeber = await prefs.getBool('remeber') ?? false;
+    String gettoken = await prefs.getString('token') ?? "0123";
+
+    var re = json.decode(await APIs().getmemberprofile(gettoken));
+    if(true){
+      var info2 = json.decode('{"token":"'+gettoken+'"}');
+
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => sipphone(data: {
+                'info': info2,
+                'profile': re,
+                'siphelp':_helper
+              })));
+      return;
+    }
+    else{
+      Fluttertoast.showToast(
+          msg: '登入超時請重新登入',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          textColor: Colors.white,
+          backgroundColor: Colors.black,
+          fontSize: 16.0
+      );
+    }
 
     setState(() {
       remeber = getremeber;
-
       if(getremeber){
         login.text = getlogin;
         password.text = getpassword;

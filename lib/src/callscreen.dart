@@ -39,7 +39,7 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
   late Timer _timer;
   bool _audioMuted = false;
   bool _videoMuted = false;
-  bool _speakerOn = false;
+  bool _speakerOn = true;
   bool _hold = false;
   String? _holdOriginator;
   CallStateEnum _state = CallStateEnum.NONE;
@@ -633,7 +633,7 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
   @override
   Widget build(BuildContext context) {
     print("cola:yesyes");
-    _toggleSpeaker();
+    //_toggleSpeaker();
     return Scaffold(
         appBar: AppBar(
             automaticallyImplyLeading: false,

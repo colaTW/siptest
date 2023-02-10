@@ -169,15 +169,7 @@ class _MyDialPadWidget extends State<DialPadWidget>
 
 
 
-    _firebaseMessaging.requestPermission(
-      alert: true,
-      announcement: false,
-      badge: true,
-      carPlay: false,
-      criticalAlert: false,
-      provisional: false,
-      sound: true,
-    );
+
   }
 
   void _loadSettings() async {

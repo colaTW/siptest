@@ -12,7 +12,8 @@ import 'APIs.dart';
 
 class bindcommunity extends StatefulWidget {
   dynamic info;
-  bindcommunity(this.info, {Key? key}) : super(key: key);
+  dynamic profile;
+  bindcommunity(this.info,this.profile, {Key? key}) : super(key: key);
   @override
   State<StatefulWidget> createState() {
     return _bindcommunity();
@@ -44,7 +45,7 @@ class _bindcommunity extends State<bindcommunity> {
               color: Colors.black
           ),
           backgroundColor: Color(0xffE6E1E0),
-          title: Text('綁定住戶',style:TextStyle(color: Color(0xff133B3A)),),
+          title: Text('帳號管理',style:TextStyle(color: Color(0xff133B3A)),),
           actions: [],
         ),
         body: Container(
@@ -61,7 +62,7 @@ class _bindcommunity extends State<bindcommunity> {
                     decoration: const InputDecoration(
                       prefixIcon: Icon(Icons.person),
                       labelText: "建案代碼",
-                      hintText: "Your houseID",
+                      hintText: "Your constructionsID",
                     ),
                   ),
                 ),
@@ -74,6 +75,8 @@ class _bindcommunity extends State<bindcommunity> {
                   get = await APIs().getconstructioninfo(constructionCode.text.toString());
                   var info = json.decode(get);
                   print(info.length.toString());
+                  if(info['code']!=0){return;}
+                  info=info['data'];
                   if(info.length==0){
                     Fluttertoast.showToast(
                         msg: "查無此建案",
@@ -166,14 +169,75 @@ class _bindcommunity extends State<bindcommunity> {
                         style: TextStyle(color: Color(0xff7587F9)),))
                 ],
               ),
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xffE6E1E0)
+              Container(width: double.infinity,child:
+              DecoratedBox(
+                decoration:BoxDecoration(
+                    border:Border.all(color: Colors.grey,width: 1.0)
+                ),
+              )),
+              SingleChildScrollView(
+                child:
+                Column(children: [
+                  Row(children: [
+                    Padding(padding: EdgeInsets.all(10),child:  Text("已綁定的住戶:"),)
+
+                  ],),
+                  new ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: widget.profile['houses'].length == 0 ? 0 : widget.profile['houses'].length,
+                    itemBuilder: (BuildContext context, int index){
+                      return new Card(
+                          child: new Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Container(child:  new Text( widget.profile['houses'][index]['constructionName']+widget.profile['houses'][index]['houseName'],softWrap: false,overflow: TextOverflow.ellipsis,maxLines: 4,textAlign: TextAlign.left),
+                              ),
+
+                              Container(child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: Color(0xff7588FA)
+                                  ),
+                                  onPressed: (){
+
+                                  }, child: Text("解除綁定")),)   ], )
+                      );
+                    },
                   ),
-                  onPressed: (){
-                    deleteaccountDialog(context);
-                  }, child:Text ("刪除帳戶",
-                style: TextStyle(color: Color(0xff7587F9)),))
+
+    ],)
+
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xffE6E1E0)
+                    ),
+                    onPressed: (){
+                      deleteaccountDialog(context);
+                    }, child:Text ("電話簿",
+                  style: TextStyle(color: Color(0xff7587F9)),)),
+                ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xffE6E1E0)
+                    ),
+                    onPressed: (){
+                      deleteaccountDialog(context);
+                    }, child:Text ("刪除帳戶",
+                  style: TextStyle(color: Color(0xff7587F9)),)),
+                ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xffE6E1E0)
+                    ),
+                    onPressed: (){
+                      deleteaccountDialog(context);
+                    }, child:Text ("登出帳號",
+                  style: TextStyle(color: Color(0xff7587F9)),))
+
+              ],)
+
             ],
           ),
         ));

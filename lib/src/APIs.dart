@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class APIs {
   var url = 'ip-intercom.reddotsolution.com';
-  var path='/app/api';
+  var path = '/app/api';
   //var url = 'community.edwardforce.tw/api';
 //  var path='api'
 
@@ -38,24 +38,29 @@ class APIs {
     }
     params["Authorization"] = ":Bearer " + token;
     params["Content-Type"] = "application/json";
-    var uri = Uri.https(url, path+'/member/project/one', body);
+    var uri = Uri.https(url, path + '/member/project/one', body);
     print(body);
     var client = http.Client();
     var response = await client.get(uri, headers: params);
     // print(response.body);
     return (response.body);
   }
+
   getbulltinlist_member(
-      String token, var title, var constructionId, var page,) async {
+    String token,
+    var title,
+    var constructionId,
+    var page,
+  ) async {
     var params = Map<String, String>();
     var body = Map<String, String>();
     body["title"] = title.toString();
     body['page'] = page.toString();
-    body['limit']="5";
-    body['constructionId'] =constructionId.toString();
+    body['limit'] = "5";
+    body['constructionId'] = constructionId.toString();
     params["Authorization"] = ":Bearer " + token;
     params["Content-Type"] = "application/json";
-    var uri = Uri.https(url, path+'/member/bulletin/list', body);
+    var uri = Uri.https(url, path + '/member/bulletin/list', body);
     print(body);
     var client = http.Client();
     var response = await client.get(uri, headers: params);
@@ -73,7 +78,7 @@ class APIs {
     var body = json.encode(params);
     var client = http.Client();
     print(body);
-    var uri = Uri.https(url, path+'/member/user/login');
+    var uri = Uri.https(url, path + '/member/user/login');
     var response = await client.post(uri, body: body, headers: header);
     print(response.body);
     return (response.body);
@@ -116,7 +121,7 @@ class APIs {
     params["mobileNotifyToken"] = mobileNotifyToken;
     var body = json.encode(params);
     var client = http.Client();
-    var uri = Uri.https(url, path+'/member/user/register');
+    var uri = Uri.https(url, path + '/member/user/register');
     var response = await client.post(uri, body: body, headers: header);
     print(response.body);
     return (response.body);
@@ -131,7 +136,7 @@ class APIs {
 
     print(body);
     var client = http.Client();
-    var uri = Uri.https(url, path+'/member/project/image/one');
+    var uri = Uri.https(url, path + '/member/project/image/one');
     var response = await client.post(uri, headers: params, body: body);
     print("body" + response.body);
     return (response.body);
@@ -144,11 +149,12 @@ class APIs {
     var client = http.Client();
     var body = json.encode(info);
     print(body);
-    var uri = Uri.https(url, path+'/manager/project/handler/one');
+    var uri = Uri.https(url, path + '/manager/project/handler/one');
     var response = await client.post(uri, body: body, headers: params);
     print("here" + response.body);
     return (response.body);
   }
+
   menberfix(var tk, var info) async {
     var params = Map<String, String>();
     params["Content-Type"] = "application/json";
@@ -156,7 +162,7 @@ class APIs {
     var client = http.Client();
     var body = json.encode(info);
     print(body);
-    var uri = Uri.https(url, path+'/member/project/one');
+    var uri = Uri.https(url, path + '/member/project/one');
     var response = await client.post(uri, body: body, headers: params);
     print("here" + response.body);
     return (response.body);
@@ -169,7 +175,7 @@ class APIs {
     body['hourseId'] = houseID.toString();
     var client = http.Client();
     print(body);
-    var uri = Uri.https(url, path+'/member/user/bind/house');
+    var uri = Uri.https(url, path + '/member/user/bind/house');
     var response = await client.post(uri, body: body, headers: params);
     print("here" + response.body);
     return (response.body);
@@ -179,38 +185,41 @@ class APIs {
     var params = Map<String, String>();
     params["Authorization"] = ":Bearer " + tk;
     params["Content-Type"] = "application/json";
-    var uri = Uri.https(url, '/app/api/member/user/profile');
+    var uri = Uri.https(url, path + '/member/user/profile');
     var client = http.Client();
     var response = await client.get(uri, headers: params);
-     print(response.body);
+    print(response.body);
     return (response.body);
   }
+
   getcategorylist(var tk) async {
     var params = Map<String, String>();
     params["Authorization"] = ":Bearer " + tk;
     params["Content-Type"] = "application/json";
-    var uri = Uri.https(url, '/app/api/member/project/category/item/options');
+    var uri = Uri.https(url, path + '/member/project/category/item/options');
     var client = http.Client();
     var response = await client.get(uri, headers: params);
-    // print(response.body);
+    print("getcategorylist" + response.body);
     return (response.body);
   }
-  startcall(var tk, var targetConstructionId, var fromHourseId,var targetHourseName) async {
+
+  startcall(var tk, var targetConstructionId, var fromHourseId,
+      var targetHourseName) async {
     var params = Map<String, String>();
     params["Authorization"] = ":Bearer " + tk;
     var body = Map<String, String>();
     body['targetConstructionId'] = targetConstructionId.toString();
     body['targetHourseName'] = targetHourseName.toString();
-    body['fromHourseId']=fromHourseId.toString();
-    print("body"+body.toString());
+    body['fromHourseId'] = fromHourseId.toString();
+    print("body" + body.toString());
 
     var client = http.Client();
-    var uri = Uri.https(url, '/app/api/member/intercom/house/call');
+    var uri = Uri.https(url, path + '/member/intercom/house/call');
     var response = await client.post(uri, body: body, headers: params);
     return (response.body);
   }
 
-  answercall(var tk, var fromMemberId, var targetSipId,var fromtype) async {
+  answercall(var tk, var fromMemberId, var targetSipId, var fromtype) async {
     var params = Map<String, String>();
     params["Authorization"] = ":Bearer " + tk;
     var body = Map<String, String>();
@@ -219,20 +228,22 @@ class APIs {
     body['fromType'] = fromtype.toString();
     var client = http.Client();
     print("body" + body.toString());
-    var uri = Uri.https(url, '/app/api/member/intercom/house/pickup');
+    var uri = Uri.https(url, path + '/member/intercom/house/pickup');
     var response = await client.post(uri, body: body, headers: params);
     print("here" + response.body);
     return (response.body);
   }
+
   getconstructioninfo(var code) async {
     var params = Map<String, String>();
     params["Content-Type"] = "application/json";
-    var uri = Uri.https(url, '/app/api/member/construction/code/'+code);
+    var uri = Uri.https(url, '/app/api/member/construction/code/' + code);
     var client = http.Client();
     var response = await client.get(uri, headers: params);
     // print(response.body);
     return (response.body);
   }
+
   deleteaccount(var tk, var password) async {
     var params = Map<String, String>();
     params["Authorization"] = ":Bearer " + tk;
@@ -240,7 +251,19 @@ class APIs {
     body['password'] = password.toString();
     var client = http.Client();
     print("body" + body.toString());
-    var uri = Uri.https(url, '/app/api/member/user/revoke');
+    var uri = Uri.https(url, path + '/member/user/revoke');
+    var response = await client.post(uri, body: body, headers: params);
+    print("here" + response.body);
+    return (response.body);
+  }
+
+  logout(var tk) async {
+    var params = Map<String, String>();
+    params["Authorization"] = ":Bearer " + tk;
+    var body = Map<String, String>();
+    var client = http.Client();
+    print("body" + body.toString());
+    var uri = Uri.https(url, path + '/member/user/logout');
     var response = await client.post(uri, body: body, headers: params);
     print("here" + response.body);
     return (response.body);

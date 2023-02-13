@@ -1,7 +1,13 @@
 import 'dart:convert';
 
 import 'package:dart_sip_ua_example/src/APIs.dart';
+import 'package:dart_sip_ua_example/src/bindcommunity.dart';
+import 'package:dart_sip_ua_example/src/bulletinlist.dart';
 import 'package:dart_sip_ua_example/src/gobalinfo.dart';
+import 'package:dart_sip_ua_example/src/login.dart';
+import 'package:dart_sip_ua_example/src/message.dart';
+import 'package:dart_sip_ua_example/src/messagefix.dart';
+import 'package:dart_sip_ua_example/src/messagelist.dart';
 import 'package:dart_sip_ua_example/src/registermember.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -23,9 +29,52 @@ import 'src/sipphone.dart';
 import 'src/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-TextEditingController DomainIP = new TextEditingController();
 SIPUAHelper _helper = SIPUAHelper();
 
+@pragma('vm:entry-point')
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  print("Handling a background message");
+  RemoteNotification notification = message.notification as RemoteNotification;
+  Map<String, dynamic> params = message.data;
+  print("message:" + message.toString());
+  print("params:" + params.toString());
+  if (params['type'] == "pickUp") {
+    showCallkitIncoming(Uuid().v4());
+
+    whoscall = params['fromHouseName'];
+    UaSettings settings = UaSettings();
+    settings.webSocketUrl = "wss://ip-intercom.reddotsolution.com:4443/ws";
+    settings.webSocketSettings.allowBadCertificate = true;
+    //settings.webSocketSettings.userAgent = 'Dart/2.8 (dart:io) for OpenSIPS.';
+    settings.uri = params['targetSipName'] + "@ip-intercom.reddotsolution.com";
+    settings.authorizationUser = params['targetSipName'];
+    settings.password = params['targetSipPassword'];
+    settings.displayName = params['targetSipName'];
+    settings.userAgent = 'Dart SIP Client v1.0.0';
+    settings.dtmfMode = DtmfMode.RFC2833;
+    _helper!.start(settings);
+  }
+}
+
+dynamic info;
+dynamic profile;
+String gowhere = "/home";
+
+Future<void> showCallkitIncoming(String uuid) async {
+  print("showCallkitIncoming:");
+  final params = CallKitParams(
+    id: uuid,
+    nameCaller: whoscall + ' 來電',
+    appName: 'Callkit',
+    type: 0,
+    duration: 30000,
+    textMissedCall: 'Missed call',
+    textCallback: 'Call back',
+    extra: <String, dynamic>{'userId': '1a2b3c4d'},
+    headers: <String, dynamic>{'apiKey': 'Abc@123!', 'platform': 'flutter'},
+  );
+  await FlutterCallkitIncoming.showCallkitIncoming(params);
+}
 
 void main() async {
   if (WebRTC.platformIsDesktop) {
@@ -33,19 +82,20 @@ void main() async {
   }
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-
   FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
     RemoteNotification notification =
-    message.notification as RemoteNotification;
+        message.notification as RemoteNotification;
     Map<String, dynamic> params = message.data;
-    print("message:"+message.toString());
+    print("message:" + message.toString());
     print("params:" + params.toString());
-    showCallkitIncoming(Uuid().v4());
 
-    /* if (params['type'] == "pickUp") {
-      whoscall=params['fromHouseName'];
-      getsipinfo = params;
+    if (params['type'] == "pickUp") {
+      showCallkitIncoming(Uuid().v4());
+
+      whoscall = params['fromHouseName'];
+      //getsipinfo = params;
       UaSettings settings = UaSettings();
       settings.webSocketUrl = "wss://ip-intercom.reddotsolution.com:4443/ws";
       settings.webSocketSettings.allowBadCertificate = true;
@@ -58,16 +108,14 @@ void main() async {
       settings.userAgent = 'Dart SIP Client v1.0.0';
       settings.dtmfMode = DtmfMode.RFC2833;
       print("setting:" + settings.webSocketUrl.toString());
-      helper!.start(settings);
-      var rng = Random();
+      _helper!.start(settings);
+      /*var rng = Random();
       sleep(Duration(milliseconds:rng.nextInt(5)*100));
       var get = await APIs().answercall(widget.info['token'],
           getsipinfo['fromId'], getsipinfo['targetSipId'],params['fromType']);
       var respone = json.decode(get);
-      print("colarespone" + respone.toString());
-    }*/
-
-
+      print("colarespone" + respone.toString());*/
+    }
   });
   _firebaseMessaging.requestPermission(
     alert: true,
@@ -78,6 +126,7 @@ void main() async {
     provisional: false,
     sound: true,
   );
+  await loadinfo();
   runApp(MyApp());
 }
 
@@ -86,288 +135,99 @@ typedef PageContentBuilder = Widget Function(
 
 // ignore: must_be_immutable
 class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: Future.delayed(Duration(seconds: 3)),
-      builder: (context, AsyncSnapshot snapshot) {
-        // Loading
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return MaterialApp(
-            home: SplashPage(),
-          );
-        }
-
-        // Main
-        else {
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            home: HomePage(),
-          );
-        }
-      },
-    );
-  }
-  Future<void> showCallkitIncoming(String uuid) async {
-    final params = CallKitParams(
-      id: uuid,
-      nameCaller: whoscall+' 來電',
-      appName: 'Callkit',
-      type: 0,
-      duration: 30000,
-      textMissedCall: 'Missed call',
-      textCallback: 'Call back',
-      extra: <String, dynamic>{'userId': '1a2b3c4d'},
-      headers: <String, dynamic>{'apiKey': 'Abc@123!', 'platform': 'flutter'},
-    );
-    await FlutterCallkitIncoming.showCallkitIncoming(params);
-
-  }
-}
-
-// SplashPage
-class SplashPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xFF333333),
-      body: Center(
-        child: Icon(
-          Icons.phone,
-          size: MediaQuery.of(context).size.width * 0.7,
+  Map<String, PageContentBuilder> routes = {
+    '/': ([SIPUAHelper? helper, Object? arguments]) =>
+        DialPadWidget(helper, "", profile, info),
+    '/register': ([SIPUAHelper? helper, Object? arguments]) =>
+        RegisterWidget(helper),
+    '/callscreen': ([SIPUAHelper? helper, Object? arguments]) =>
+        CallScreenWidget(helper, arguments as Call?),
+    '/about': ([SIPUAHelper? helper, Object? arguments]) => AboutWidget(),
+    '/home': ([SIPUAHelper? helper, Object? arguments]) =>
+        HomeWidget(isBind, profile),
+    '/message': ([SIPUAHelper? helper, Object? arguments]) => message(info),
+    '/bulletin': ([SIPUAHelper? helper, Object? arguments]) =>
+        bulletinlist(info, profile),
+    '/messagefix': ([SIPUAHelper? helper, Object? arguments]) =>
+        messagefix(info),
+    '/messagelist': ([SIPUAHelper? helper, Object? arguments]) => messagelist(
+          info,
         ),
-      ),
-    );
-  }
-}
+    '/security': ([SIPUAHelper? helper, Object? arguments]) =>
+        DialPadWidget(helper, "1", profile, info),
+    '/bind': ([SIPUAHelper? helper, Object? arguments]) =>
+        bindcommunity(info, profile),
+    '/login': ([SIPUAHelper? helper, Object? arguments]) => Login(),
+  };
 
-class HomePage extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    return _HomePage();
-  }
-}
-
-class _HomePage extends State<HomePage> {
-  TextEditingController login = TextEditingController();
-  TextEditingController password = TextEditingController();
-  TextEditingController buildingcode = TextEditingController();
-  bool remeber = false;
-  bool isDisable = false;
-  @override
-  void initState() {
-    //loadlogininfo();
-    super.initState();
+  Route<dynamic>? _onGenerateRoute(RouteSettings settings) {
+    final String? name = settings.name;
+    final PageContentBuilder? pageContentBuilder = routes[name!];
+    if (pageContentBuilder != null) {
+      if (settings.arguments != null) {
+        final Route route = MaterialPageRoute<Widget>(
+            builder: (context) =>
+                pageContentBuilder(_helper, settings.arguments));
+        return route;
+      } else {
+        final Route route = MaterialPageRoute<Widget>(
+            builder: (context) => pageContentBuilder(_helper));
+        return route;
+      }
+    }
+    return null;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        child: Text('V1.0.10'),
-        onPressed: null,
-        backgroundColor: Colors.grey,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(14.0))),
+    print("gowhere:" + gowhere);
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
 
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        fontFamily: 'Roboto',
       ),
-      backgroundColor: Color(0xffE6E1E0),
-      appBar: AppBar(
-        backgroundColor: Color(0xffE6E1E0),
-        title: Text("首頁",style:TextStyle(color: Color(0xff133B3A)),),
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-            child: TextFormField(
-              controller: login,
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.person),
-                labelText: "帳號",
-                hintText: "Your account username",
-              ),
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-            child: TextFormField(
-              controller: password,
-              obscureText: true,
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.person),
-                labelText: "密碼",
-                hintText: "Your account password",
-              ),
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-            child: CheckboxListTile(
-              title: const Text('是否記住登入資訊'),
-              value: remeber,
-              onChanged: (bool? value) async{
-                setState(() {
-                  remeber = value! ? true : false; // rebuilds with new value
-                });
-                SharedPreferences prefs =
-                await SharedPreferences.getInstance();
-
-                await prefs.setBool("remeber", remeber);
-              },
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xffE6E1E0)
-                  ),
-                  onPressed: isDisable
-                      ? null
-                      : () async {
-                          setState(() {
-                            isDisable = true;
-                          });
-                          String get;
-                          get = await APIs().login_member(login.text,
-                              password.text); //getData()延遲執行後賦值給data
-                          var info = json.decode(get);
-                          if (info['code'] == 0) {
-                            if (remeber) {
-                              SharedPreferences prefs =
-                                  await SharedPreferences.getInstance();
-                              await prefs.setString("username", login.text);
-                              await prefs.setString("password", password.text);
-                              await prefs.setBool("remeber", remeber);
-                              await prefs.setString("token",info['token']);
-                            }
-                            get = await APIs().getmemberprofile(info['token']);
-                            var profile = json.decode(get);
-                            profile=profile['data'];
-
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => sipphone(data: {
-                                          'info': info,
-                                          'profile': profile,
-                                          'siphelp':_helper
-                                        })));
-                          } else {
-                            loginfailDialog(context, info['message']);
-                          }
-                          if (mounted) {
-                            setState(() {
-                              isDisable = false;
-                            });
-                          }
-                        },
-                  child: Text('登入',
-                  style: TextStyle(color: Color(0xff7587F9)),
-                  )),
-              Text("  |  ",
-                style: TextStyle(color: Color(0xff7587F9)),),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xffE6E1E0)
-                ),
-                child: Text(
-                  "註冊會員",
-                  style: TextStyle(color: Color(0xff7587F9)),
-                ),
-                onPressed: isDisable? null
-                    : () async{
-                  setState(() {
-                    isDisable = true;
-                  });
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => registermember()));
-                  setState(() {
-                    isDisable = false;
-                  });
-                },
-              )
-            ],
-          )
-        ],
-      ),
+      initialRoute: gowhere,
+      onGenerateRoute: _onGenerateRoute,
     );
   }
+}
 
-  loadlogininfo() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String getlogin = await prefs.getString('username') ?? "";
-    String getpassword = await prefs.getString('password') ?? "";
-    bool getremeber = await prefs.getBool('remeber') ?? false;
-    String gettoken = await prefs.getString('token') ?? "0123";
+loadinfo() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String getlogin = await prefs.getString('username') ?? "";
+  String getpassword = await prefs.getString('password') ?? "";
+  bool getremeber = await prefs.getBool('remeber') ?? false;
+  String gettoken = await prefs.getString('token') ?? "0123";
+  print("oo" + gettoken);
+  var re = json.decode(await APIs().getmemberprofile(gettoken));
+  if (re['code'] == 0) {
+    var info2 = json.decode('{"token":"' + gettoken + '"}');
+    info = info2;
+    profile = re['data'];
+    if (profile['houses'].length > 0) {
+      print(">0");
+      isBind = true;
+      gowhere = "/";
+    } else {
+      print("<0");
 
-    var re = json.decode(await APIs().getmemberprofile(gettoken));
-    if(true){
-      var info2 = json.decode('{"token":"'+gettoken+'"}');
+      gowhere = "/home";
 
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => sipphone(data: {
-                'info': info2,
-                'profile': re,
-                'siphelp':_helper
-              })));
-      return;
+      isBind = false;
     }
-    else{
-      Fluttertoast.showToast(
-          msg: '登入超時請重新登入',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          textColor: Colors.white,
-          backgroundColor: Colors.black,
-          fontSize: 16.0
-      );
-    }
-
-    setState(() {
-      remeber = getremeber;
-      if(getremeber){
-        login.text = getlogin;
-        password.text = getpassword;
-      }
-      else{
-        login.text = "";
-        password.text = "";
-      }
-    });
-  }
-
-  void loginfailDialog(BuildContext context, String message) {
-    showDialog(
-        context: context,
-        barrierDismissible: true,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            content: Text('登入失敗:' + message),
-            title: Center(
-                child: Text(
-              '登入訊息',
-              style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.bold),
-            )),
-            actions: <Widget>[
-              ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('确定')),
-            ],
-          );
-        });
+    return;
+  } else {
+    gowhere = "/login";
+    Fluttertoast.showToast(
+        msg: '登入超時請重新登入',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        textColor: Colors.white,
+        backgroundColor: Colors.black,
+        fontSize: 16.0);
   }
 }
-// HomePage

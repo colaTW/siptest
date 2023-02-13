@@ -12,7 +12,6 @@ import 'package:flutter_callkit_incoming/entities/call_event.dart';
 import 'package:flutter_callkit_incoming/entities/call_kit_params.dart';
 import 'package:flutter_callkit_incoming/entities/ios_params.dart';
 import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
-import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -31,53 +30,8 @@ import 'package:firebase_core/firebase_core.dart';
 
 TextEditingController DomainIP = new TextEditingController();
 dynamic nowwho;
-var iscall=0;
-SIPUAHelper helper2 = SIPUAHelper();
-String whoscall="080";
-
-
-@pragma('vm:entry-point')
-Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  print("Handling a background message");
-  RemoteNotification notification =
-  message.notification as RemoteNotification;
-  Map<String, dynamic> params = message.data;
-  print("message:"+message.toString());
-  print("params:" + params.toString());
-  if (params['type'] == "pickUp") {
-    whoscall=params['fromHouseName'];
-    UaSettings settings = UaSettings();
-    settings.webSocketUrl = "wss://ip-intercom.reddotsolution.com:4443/ws";
-    settings.webSocketSettings.allowBadCertificate = true;
-    //settings.webSocketSettings.userAgent = 'Dart/2.8 (dart:io) for OpenSIPS.';
-    settings.uri =
-        params['targetSipName'] + "@ip-intercom.reddotsolution.com";
-    settings.authorizationUser = params['targetSipName'];
-    settings.password = params['targetSipPassword'];
-    settings.displayName = params['targetSipName'];
-    settings.userAgent = 'Dart SIP Client v1.0.0';
-    settings.dtmfMode = DtmfMode.RFC2833;
-    helper2!.start(settings);
-
-   }
-}
-
-
-Future<void> showCallkitIncoming(String uuid) async {
-  final params = CallKitParams(
-    id: uuid,
-    nameCaller: whoscall+' 來電',
-    appName: 'Callkit',
-    type: 0,
-    duration: 30000,
-    textMissedCall: 'Missed call',
-    textCallback: 'Call back',
-    extra: <String, dynamic>{'userId': '1a2b3c4d'},
-    headers: <String, dynamic>{'apiKey': 'Abc@123!', 'platform': 'flutter'},
-  );
-  await FlutterCallkitIncoming.showCallkitIncoming(params);
-
-}
+var iscall = 0;
+String whoscall = "080";
 
 class DialPadWidget extends StatefulWidget {
   final SIPUAHelper? _helper;
@@ -105,50 +59,20 @@ class _MyDialPadWidget extends State<DialPadWidget>
   late Map<String, dynamic> getsipinfo;
   @override
   initState() {
-    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (get == "1") {
         showchioceDialog(context);
       }
     });
-    print( widget.profile['houses'].toString());
+    print("123" + widget.profile.toString());
     super.initState();
     receivedMsg = "";
     _bindEventListeners();
     _loadSettings();
     print("cola" + get.toString());
     _firebaseMessaging.subscribeToTopic('all');
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-      RemoteNotification notification =
-          message.notification as RemoteNotification;
-      Map<String, dynamic> params = message.data;
-      print("message:"+message.toString());
-      print("params:" + params.toString());
-      if (params['type'] == "pickUp") {
-        whoscall=params['fromHouseName'];
-        getsipinfo = params;
-        UaSettings settings = UaSettings();
-        settings.webSocketUrl = "wss://ip-intercom.reddotsolution.com:4443/ws";
-        settings.webSocketSettings.allowBadCertificate = true;
-        //settings.webSocketSettings.userAgent = 'Dart/2.8 (dart:io) for OpenSIPS.';
-        settings.uri =
-            params['targetSipName'] + "@ip-intercom.reddotsolution.com";
-        settings.authorizationUser = params['targetSipName'];
-        settings.password = params['targetSipPassword'];
-        settings.displayName = params['targetSipName'];
-        settings.userAgent = 'Dart SIP Client v1.0.0';
-        settings.dtmfMode = DtmfMode.RFC2833;
-        print("setting:" + settings.webSocketUrl.toString());
-        helper!.start(settings);
-        var rng = Random();
-        sleep(Duration(milliseconds:rng.nextInt(5)*100));
-        var get = await APIs().answercall(widget.info['token'],
-            getsipinfo['fromId'], getsipinfo['targetSipId'],params['fromType']);
-        var respone = json.decode(get);
-        print("colarespone" + respone.toString());
-      }
 
-      /*UaSettings settings = UaSettings();
+    /*UaSettings settings = UaSettings();
     settings.webSocketUrl = "ws://pingling.asuscomm.com:8080/ws";
     settings.webSocketSettings.allowBadCertificate = true;
     //settings.webSocketSettings.userAgent = 'Dart/2.8 (dart:io) for OpenSIPS.';
@@ -160,16 +84,6 @@ class _MyDialPadWidget extends State<DialPadWidget>
     settings.dtmfMode = DtmfMode.RFC2833;
     print("setting:"+settings.webSocketUrl.toString());
     helper!.start(settings);*/
-    });
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
-      print("onMessageOpenedApp: $message");
-      Navigator.pushNamed(context, '/');
-
-    });
-
-
-
-
   }
 
   void _loadSettings() async {
@@ -192,7 +106,7 @@ class _MyDialPadWidget extends State<DialPadWidget>
       await Permission.microphone.request();
       await Permission.camera.request();
     }
-    _textController?.text="";
+    _textController?.text = "";
 
     if (dest == null || dest.isEmpty) {
       showDialog<void>(
@@ -366,9 +280,12 @@ class _MyDialPadWidget extends State<DialPadWidget>
             child: IgnorePointer(
                 ignoring:
                     true, // You can make this a variable in other toggle True or False
-                child: Text('Reddot sip',style:TextStyle(color: Color(0xff133B3A)),)),
+                child: Text(
+                  'Reddot sip',
+                  style: TextStyle(color: Color(0xff133B3A)),
+                )),
           ),
-        /*  actions: <Widget>[
+          /*  actions: <Widget>[
             PopupMenuButton<String>(
                 onSelected: (String value) {
                   switch (value) {
@@ -465,20 +382,13 @@ class _MyDialPadWidget extends State<DialPadWidget>
   void callStateChanged(Call call, CallState callState) {
     if (callState.state == CallStateEnum.CALL_INITIATION) {
       Navigator.pushNamed(context, '/callscreen', arguments: call);
-      if(iscall==0){
-        showCallkitIncoming(Uuid().v4());
-
-      }
-
-
     }
     if (callState.state == CallStateEnum.FAILED) {
-       FlutterCallkitIncoming.endAllCalls();
+      FlutterCallkitIncoming.endAllCalls();
 
-      _textController?.text= "";
-      iscall=0;
+      _textController?.text = "";
+      iscall = 0;
       Navigator.of(context).pop();
-      FlutterRingtonePlayer.stop();
     }
   }
 
@@ -577,23 +487,25 @@ class _MyDialPadWidget extends State<DialPadWidget>
                               print("setting:" +
                                   settings.webSocketUrl.toString());
                               helper!.start(settings);
-                              print("get:"+widget.get.toString());
-                              if(widget.get.toString()=="1"){
+                              print("get:" + widget.get.toString());
+                              if (widget.get.toString() == "1") {
                                 Navigator.pop(context);
-                                _textController?.text=widget.profile['houses'][index]['constructionSipUserName'];
-                                iscall=1;
-                                await Future.delayed(const Duration(seconds: 1));
+                                _textController?.text = widget.profile['houses']
+                                    [index]['constructionSipUserName'];
+                                iscall = 1;
+                                await Future.delayed(
+                                    const Duration(seconds: 1));
 
                                 _handleCall(context);
-
-                              }
-                              else{
+                              } else {
                                 Navigator.pop(context);
-                                print("heree:"+ widget.profile['houses'][index]['houseID'].toString());
+                                print("heree:" +
+                                    widget.profile['houses'][index]['houseID']
+                                        .toString());
                                 var get = await APIs().startcall(
                                     widget.info['token'],
                                     widget.profile['houses'][index]
-                                    ['constructionId'],
+                                        ['constructionId'],
                                     widget.profile['houses'][index]['houseID'],
                                     _textController?.text);
                                 var respone = json.decode(get);
@@ -607,17 +519,15 @@ class _MyDialPadWidget extends State<DialPadWidget>
                                       textColor: Colors.white,
                                       backgroundColor: Colors.black,
                                       fontSize: 16.0);
-                                }
-                                else{
-                                  _textController?.text= respone['data']['targetSipName'];
-                                  iscall=1;
-                                  await Future.delayed(const Duration(seconds: 1));
+                                } else {
+                                  _textController?.text =
+                                      respone['data']['targetSipName'];
+                                  iscall = 1;
+                                  await Future.delayed(
+                                      const Duration(seconds: 1));
                                   _handleCall(context);
-
                                 }
                               }
-
-
                             },
                             child: Text("選擇"))
                       ],

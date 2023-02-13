@@ -8,7 +8,6 @@ import 'package:flutter_callkit_incoming/entities/call_kit_params.dart';
 import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:sip_ua/sip_ua.dart';
-import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:uuid/uuid.dart';
 import '../notification.dart';
 import 'widgets/action_button.dart';
@@ -39,7 +38,7 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
   late Timer _timer;
   bool _audioMuted = false;
   bool _videoMuted = false;
-  bool _speakerOn = true;
+  bool _speakerOn = false;
   bool _hold = false;
   String? _holdOriginator;
   CallStateEnum _state = CallStateEnum.NONE;
@@ -47,7 +46,7 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
 
   bool get voiceOnly =>
       (_localStream == null || _localStream!.getVideoTracks().isEmpty) &&
-          (_remoteStream == null || _remoteStream!.getVideoTracks().isEmpty);
+      (_remoteStream == null || _remoteStream!.getVideoTracks().isEmpty);
 
   String? get remoteIdentity => call!.remote_display_name;
 
@@ -91,7 +90,6 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
     super.initState();
     _initRenderers();
     helper!.addSipUaHelperListener(this);
-    FlutterRingtonePlayer.playRingtone();
     _startTimer();
   }
 
@@ -108,7 +106,6 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
   deactivate() {
     super.deactivate();
     helper!.removeSipUaHelperListener(this);
-    FlutterRingtonePlayer.stop();
 
     _disposeRenderers();
   }
@@ -231,7 +228,6 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
 
   void _handelStreams(CallState event) async {
     MediaStream? stream = event.stream;
-    FlutterRingtonePlayer.stop();
     if (event.originator == 'local') {
       if (_localRenderer != null) {
         _localRenderer!.srcObject = stream;
@@ -273,7 +269,6 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
   void _handleAccept() async {
     FlutterCallkitIncoming.endAllCalls();
 
-    FlutterRingtonePlayer.stop();
     bool remoteHasVideo = call!.remote_has_video;
     final mediaConstraints = <String, dynamic>{
       'audio': true,
@@ -283,10 +278,10 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
 
     if (kIsWeb && remoteHasVideo) {
       mediaStream =
-      await navigator.mediaDevices.getDisplayMedia(mediaConstraints);
+          await navigator.mediaDevices.getDisplayMedia(mediaConstraints);
       mediaConstraints['video'] = false;
       MediaStream userStream =
-      await navigator.mediaDevices.getUserMedia(mediaConstraints);
+          await navigator.mediaDevices.getUserMedia(mediaConstraints);
       mediaStream.addTrack(userStream.getAudioTracks()[0], addToNative: true);
     } else {
       mediaConstraints['video'] = remoteHasVideo;
@@ -309,6 +304,7 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
     } else {
       call!.mute(true, false);
     }
+    print("_audioMuted"+_audioMuted.toString());
   }
 
   void _muteVideo() {
@@ -412,17 +408,17 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
 
     return labels
         .map((row) => Padding(
-        padding: const EdgeInsets.all(3),
-        child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: row
-                .map((label) => ActionButton(
-              title: label.keys.first,
-              subTitle: label.values.first,
-              onPressed: () => _handleDtmf(label.keys.first),
-              number: true,
-            ))
-                .toList())))
+            padding: const EdgeInsets.all(3),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: row
+                    .map((label) => ActionButton(
+                          title: label.keys.first,
+                          subTitle: label.values.first,
+                          onPressed: () => _handleDtmf(label.keys.first),
+                          number: true,
+                        ))
+                    .toList())))
         .toList();
   }
 
@@ -466,12 +462,12 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
       case CallStateEnum.ACCEPTED:
       case CallStateEnum.CONFIRMED:
         {
-          advanceActions.add(ActionButton(
+          (advanceActions.add(ActionButton(
             title: _audioMuted ? 'unmute' : 'mute',
             icon: _audioMuted ? Icons.mic_off : Icons.mic,
             checked: _audioMuted,
             onPressed: () => _muteAudio(),
-          ));
+          )));
 
           if (voiceOnly) {
             advanceActions.add(ActionButton(
@@ -487,7 +483,7 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
             ));
           }
 
-          if (voiceOnly) {
+          if (true) {
             advanceActions.add(ActionButton(
               title: _speakerOn ? 'speaker off' : 'speaker on',
               icon: _speakerOn ? Icons.volume_off : Icons.volume_up,
@@ -503,16 +499,16 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
             ));
           }
 
-          basicActions.add(ActionButton(
+          /*basicActions.add(ActionButton(
             title: _hold ? 'unhold' : 'hold',
             icon: _hold ? Icons.play_arrow : Icons.pause,
             checked: _hold,
             onPressed: () => _handleHold(),
-          ));
+          ));*/
 
           basicActions.add(hangupBtn);
 
-          if (_showNumPad) {
+          /* if (_showNumPad) {
             basicActions.add(ActionButton(
               title: "back",
               icon: Icons.keyboard_arrow_down,
@@ -524,7 +520,7 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
               icon: Icons.phone_forwarded,
               onPressed: () => _handleTransfer(),
             ));
-          }
+          }*/
         }
         break;
       case CallStateEnum.FAILED:
@@ -595,33 +591,33 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
         right: 0,
         child: Center(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Center(
-                    child: Padding(
-                        padding: const EdgeInsets.all(6),
-                        child: Text(
-                          (voiceOnly ? 'VOICE CALL' : 'VIDEO CALL') +
-                              (_hold
-                                  ? ' PAUSED BY ${_holdOriginator!.toUpperCase()}'
-                                  : ''),
-                          style: TextStyle(fontSize: 24, color: Colors.black54),
-                        ))),
-                Center(
-                    child: Padding(
-                        padding: const EdgeInsets.all(6),
-                        child: Text(
-                          '$remoteIdentity',
-                          style: TextStyle(fontSize: 18, color: Colors.black54),
-                        ))),
-                Center(
-                    child: Padding(
-                        padding: const EdgeInsets.all(6),
-                        child: Text(_timeLabel,
-                            style: TextStyle(fontSize: 14, color: Colors.black54))))
-              ],
-            )),
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Center(
+                child: Padding(
+                    padding: const EdgeInsets.all(6),
+                    child: Text(
+                      (voiceOnly ? 'VOICE CALL' : 'VIDEO CALL') +
+                          (_hold
+                              ? ' PAUSED BY ${_holdOriginator!.toUpperCase()}'
+                              : ''),
+                      style: TextStyle(fontSize: 24, color: Colors.black54),
+                    ))),
+            Center(
+                child: Padding(
+                    padding: const EdgeInsets.all(6),
+                    child: Text(
+                      '$remoteIdentity',
+                      style: TextStyle(fontSize: 18, color: Colors.black54),
+                    ))),
+            Center(
+                child: Padding(
+                    padding: const EdgeInsets.all(6),
+                    child: Text(_timeLabel,
+                        style: TextStyle(fontSize: 14, color: Colors.black54))))
+          ],
+        )),
       ),
     ]);
 

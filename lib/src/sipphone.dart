@@ -1,3 +1,4 @@
+import 'package:dart_sip_ua_example/main.dart';
 import 'package:dart_sip_ua_example/src/bindcommunity.dart';
 import 'package:dart_sip_ua_example/src/bulletin.dart';
 import 'package:dart_sip_ua_example/src/bulletinlist.dart';
@@ -26,7 +27,6 @@ typedef PageContentBuilder = Widget Function(
     [SIPUAHelper? helper, Object? arguments]);
 dynamic getdata;
 var width;
-SIPUAHelper _helper = SIPUAHelper();
 
 // ignore: must_be_immutable
 class sipphone extends StatefulWidget {
@@ -44,10 +44,9 @@ class _sipphone extends State<sipphone> {
   @override
   void initState() {
     getdata = widget.data;
-    _helper = widget.data['siphelp'];
-
   }
 
+  SIPUAHelper _helper = SIPUAHelper();
 
   Map<String, PageContentBuilder> routes = {
     '/': ([SIPUAHelper? helper, Object? arguments]) =>
@@ -61,11 +60,12 @@ class _sipphone extends State<sipphone> {
         HomeWidget(isBind, getdata['profile']),
     '/message': ([SIPUAHelper? helper, Object? arguments]) =>
         message(getdata['info']),
-    '/bulletin': ([SIPUAHelper? helper, Object? arguments]) => bulletinlist(getdata['info'],getdata['profile']),
+    '/bulletin': ([SIPUAHelper? helper, Object? arguments]) =>
+        bulletinlist(getdata['info'], getdata['profile']),
     '/messagefix': ([SIPUAHelper? helper, Object? arguments]) =>
         messagefix(getdata['info']),
     '/messagelist': ([SIPUAHelper? helper, Object? arguments]) =>
-        messagelist(getdata['info'],width),
+        messagelist(getdata['info']),
     '/security': ([SIPUAHelper? helper, Object? arguments]) =>
         DialPadWidget(helper, "1", getdata['profile'], getdata['info']),
     '/bind': ([SIPUAHelper? helper, Object? arguments]) =>
@@ -93,8 +93,9 @@ class _sipphone extends State<sipphone> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    width=size.width;
-    if (getdata['profile']['houses'].length > 0) {
+    width = size.width;
+    print("profile" + profile.toString());
+    if (profile['houses'].length > 0) {
       isBind = true;
       gowhere = "/";
     } else {

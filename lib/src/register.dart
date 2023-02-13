@@ -35,7 +35,6 @@ class _MyRegisterWidget extends State<RegisterWidget>
     helper!.addSipUaHelperListener(this);
     _loadSettings();
     //_handleSave();
-
   }
 
   @override
@@ -48,8 +47,8 @@ class _MyRegisterWidget extends State<RegisterWidget>
   void _loadSettings() async {
     _preferences = await SharedPreferences.getInstance();
     setState(() {
-      _wsUriController.text =
-          _preferences.getString('ws_uri') ?? 'ws://pingling.asuscomm.com:8080 ';
+      _wsUriController.text = _preferences.getString('ws_uri') ??
+          'ws://pingling.asuscomm.com:8080 ';
       _sipUriController.text =
           _preferences.getString('sip_uri') ?? '0003@pingling.asuscomm.com';
       _displayNameController.text =
@@ -73,7 +72,7 @@ class _MyRegisterWidget extends State<RegisterWidget>
   void registrationStateChanged(RegistrationState state) {
     setState(() {
       _registerState = state;
-      print("colahere"+EnumHelper.getName(_registerState.state));
+      print("colahere" + EnumHelper.getName(_registerState.state));
       /*if(EnumHelper.getName(_registerState.state)=="Registered"){
         helper!.removeSipUaHelperListener(this);
         _saveSettings();
@@ -105,7 +104,7 @@ class _MyRegisterWidget extends State<RegisterWidget>
   }
 
   void _handleSave() {
-   /* if (_wsUriController.text == '') {
+    /* if (_wsUriController.text == '') {
       _alert(context, "WebSocket URL");
     } else if (_sipUriController.text == '') {
       _alert(context, "SIP URI");
@@ -124,7 +123,8 @@ class _MyRegisterWidget extends State<RegisterWidget>
     settings.displayName = "0001";
     settings.userAgent = 'Dart SIP Client v1.0.0';
     settings.dtmfMode = DtmfMode.RFC2833;
-    print("setting:"+settings.webSocketUrl.toString());
+
+    print("setting:" + settings.webSocketUrl.toString());
     helper!.start(settings);
   }
 
@@ -132,7 +132,6 @@ class _MyRegisterWidget extends State<RegisterWidget>
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-
           title: Text("SIP Account"),
         ),
         body: Align(
@@ -293,7 +292,6 @@ class _MyRegisterWidget extends State<RegisterWidget>
                         ),
                       ))
                 ])));
-
   }
 
   @override

@@ -50,17 +50,8 @@ class _HomeWidget extends State<HomeWidget> {
     return Scaffold(
       backgroundColor: Color(0xffE6E1E0),
       appBar: AppBar(
-        iconTheme: IconThemeData(
-            color: Colors.black
-        ),
-        leadingWidth: 20, //<-- Use this
+        automaticallyImplyLeading: false,
         centerTitle: false,
-        leading: new IconButton(
-          icon: new Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            Navigator.of(context, rootNavigator: true).pop();
-          },
-        ),
         title: Padding(
             padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
             child: Image.asset(
@@ -155,7 +146,6 @@ class _HomeWidget extends State<HomeWidget> {
                           },
                         ),
                       ),
-
                     ],
                   ),
                   //2ROW
@@ -202,7 +192,6 @@ class _HomeWidget extends State<HomeWidget> {
                           },
                         ),
                       ),
-
 
                       /*Expanded(
                   child: GestureDetector(
@@ -265,7 +254,7 @@ class _HomeWidget extends State<HomeWidget> {
                 Image.asset(
                   'assets/images/P17.png',
                 ),
-                Expanded(
+                /* Expanded(
                   child: GestureDetector(
                     child: Image.asset(
                       'assets/images/P15.png',
@@ -275,7 +264,7 @@ class _HomeWidget extends State<HomeWidget> {
                           "http://www.reddotsolution.com/home/index-5.html"));
                     },
                   ),
-                ),
+                ),*/
                 Image.asset(
                   'assets/images/P17.png',
                 ),
@@ -330,6 +319,7 @@ class _HomeWidget extends State<HomeWidget> {
     }
   }
 }
+
 void showFAQsDialog(BuildContext context) {
   final size = MediaQuery.of(context).size;
   final width = size.width;
@@ -340,78 +330,150 @@ void showFAQsDialog(BuildContext context) {
         return new AlertDialog(
           backgroundColor: Color(0xffE6E1E0),
           content: Container(
-            color: Color(0xffE6E1E0),
-            width: width,
-            height:height ,
-            child:
-                SingleChildScrollView(child:
-              Column(
+              color: Color(0xffE6E1E0),
+              width: width,
+              height: height,
+              child: SingleChildScrollView(
+                  child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                Image.asset("assets/images/p26.png"),
-                Text("一、如何開始啟用？",style: TextStyle(color:Color(0xff7586F8) ,fontSize:16),textAlign:TextAlign.start ,),
-                Row(children: [
-                  Text("       "),
-                  Flexible(child: Text("Step1\n至IOS App Store 及Android Play商店下載專屬APP。\nStep2\n首次使用先註冊會員\nStep3\n登入後點右上角「Account」，進行綁定住戶。建案代碼為社區啟用時預設，\n詳情可洽該社區管委會。"
-                      ,style: TextStyle(color:Color(0xff3D3D3D) ,fontSize:14),textAlign:TextAlign.start )),
-                ],),
-                Text("\n二、出國是否可以使用？",style: TextStyle(color:Color(0xff7586F8) ,fontSize:16),textAlign:TextAlign.start ,),
-                Row(children: [
-                    Text("       "),
-                    Flexible(child: Text("可以，只要成功使用internet網絡，異地均能暢通使用。"
-                        ,style: TextStyle(color:Color(0xff3D3D3D) ,fontSize:14),textAlign:TextAlign.start )),
-                  ],),
-                Text("\n三、手機更換或遺失、門號變更，如何重新登入？",style: TextStyle(color:Color(0xff7586F8) ,fontSize:16),textAlign:TextAlign.start ,),
-                  Row(children: [
-                    Text("       "),
-                    Flexible(child: Text("手機更換或遺失：重新下載APP輸入當初註冊的帳密即可。\n門號變更：不影響本APP功能，輸入當初註冊的帳密即可。"
-                        ,style: TextStyle(color:Color(0xff3D3D3D) ,fontSize:14),textAlign:TextAlign.start )),
-                  ],),
-                  Text("\n四、同住家人可以同時加入嗎？",style: TextStyle(color:Color(0xff7586F8) ,fontSize:16),textAlign:TextAlign.start ,),
-                  Row(children: [
-                    Text("       "),
-                    Flexible(child: Text("可以的，一戶可以有多人使用。溝通響鈴以同戶優先接通後，同戶其餘響鈴結束。"
-                        ,style: TextStyle(color:Color(0xff3D3D3D) ,fontSize:14),textAlign:TextAlign.start )),
-                  ],),
-                  Text("\n五、如何撥打給鄰居？",style: TextStyle(color:Color(0xff7586F8) ,fontSize:16),textAlign:TextAlign.start ,),
-                  Row(children: [
-                    Text("       "),
-                    Flexible(child: Text("完成綁定住戶後，登入即可直接撥打給其他住戶。\n於主畫面中按「call 住戶對講」一樣可打給其他住戶，\n比照大樓約定樓層戶別的撥打傳統對講機形式。"
-                        ,style: TextStyle(color:Color(0xff3D3D3D) ,fontSize:14),textAlign:TextAlign.start )),
-                  ],),
-                  Text("\n六、如何撥打給警衛？",style: TextStyle(color:Color(0xff7586F8) ,fontSize:16),textAlign:TextAlign.start ,),
-                  Row(children: [
-                    Text("       "),
-                    Flexible(child: Text("於主畫面中按「呼叫警衛」立即ㄧ鍵呼叫。\n如使用者名下多戶，則需選擇為哪一戶別的呼叫來源。以利警衛視回應。"
-                        ,style: TextStyle(color:Color(0xff3D3D3D) ,fontSize:14),textAlign:TextAlign.start )),
-                  ],),
-                  Text("\n七、如何查詢留言紀錄？",style: TextStyle(color:Color(0xff7586F8) ,fontSize:16),textAlign:TextAlign.start ,),
-                  Row(children: [
-                    Text("       "),
-                    Flexible(child: Text("於主畫面中按「意見反映」即可得知留言及管委會回覆。"
-                        ,style: TextStyle(color:Color(0xff3D3D3D) ,fontSize:14),textAlign:TextAlign.start )),
-                  ],),
-                  Text("\n八、如何留言？",style: TextStyle(color:Color(0xff7586F8) ,fontSize:16),textAlign:TextAlign.start ,),
-                  Row(children: [
-                    Text("       "),
-                    Flexible(child: Text("於主畫面中按「意見反映」之右上角可新增留言(意見)。"
-                        ,style: TextStyle(color:Color(0xff3D3D3D) ,fontSize:14),textAlign:TextAlign.start )),
-                  ],),
-                ],))
-
-          ),
+                  Image.asset("assets/images/p26.png"),
+                  Text(
+                    "一、如何開始啟用？",
+                    style: TextStyle(color: Color(0xff7586F8), fontSize: 16),
+                    textAlign: TextAlign.start,
+                  ),
+                  Row(
+                    children: [
+                      Text("       "),
+                      Flexible(
+                          child: Text(
+                              "Step1\n至IOS App Store 及Android Play商店下載專屬APP。\nStep2\n首次使用先註冊會員\nStep3\n登入後點右上角「Account」，進行綁定住戶。建案代碼為社區啟用時預設，\n詳情可洽該社區管委會。",
+                              style: TextStyle(
+                                  color: Color(0xff3D3D3D), fontSize: 14),
+                              textAlign: TextAlign.start)),
+                    ],
+                  ),
+                  Text(
+                    "\n二、出國是否可以使用？",
+                    style: TextStyle(color: Color(0xff7586F8), fontSize: 16),
+                    textAlign: TextAlign.start,
+                  ),
+                  Row(
+                    children: [
+                      Text("       "),
+                      Flexible(
+                          child: Text("可以，只要成功使用internet網絡，異地均能暢通使用。",
+                              style: TextStyle(
+                                  color: Color(0xff3D3D3D), fontSize: 14),
+                              textAlign: TextAlign.start)),
+                    ],
+                  ),
+                  Text(
+                    "\n三、手機更換或遺失、門號變更，如何重新登入？",
+                    style: TextStyle(color: Color(0xff7586F8), fontSize: 16),
+                    textAlign: TextAlign.start,
+                  ),
+                  Row(
+                    children: [
+                      Text("       "),
+                      Flexible(
+                          child: Text(
+                              "手機更換或遺失：重新下載APP輸入當初註冊的帳密即可。\n門號變更：不影響本APP功能，輸入當初註冊的帳密即可。",
+                              style: TextStyle(
+                                  color: Color(0xff3D3D3D), fontSize: 14),
+                              textAlign: TextAlign.start)),
+                    ],
+                  ),
+                  Text(
+                    "\n四、同住家人可以同時加入嗎？",
+                    style: TextStyle(color: Color(0xff7586F8), fontSize: 16),
+                    textAlign: TextAlign.start,
+                  ),
+                  Row(
+                    children: [
+                      Text("       "),
+                      Flexible(
+                          child: Text("可以的，一戶可以有多人使用。溝通響鈴以同戶優先接通後，同戶其餘響鈴結束。",
+                              style: TextStyle(
+                                  color: Color(0xff3D3D3D), fontSize: 14),
+                              textAlign: TextAlign.start)),
+                    ],
+                  ),
+                  Text(
+                    "\n五、如何撥打給鄰居？",
+                    style: TextStyle(color: Color(0xff7586F8), fontSize: 16),
+                    textAlign: TextAlign.start,
+                  ),
+                  Row(
+                    children: [
+                      Text("       "),
+                      Flexible(
+                          child: Text(
+                              "完成綁定住戶後，登入即可直接撥打給其他住戶。\n於主畫面中按「call 住戶對講」一樣可打給其他住戶，\n比照大樓約定樓層戶別的撥打傳統對講機形式。",
+                              style: TextStyle(
+                                  color: Color(0xff3D3D3D), fontSize: 14),
+                              textAlign: TextAlign.start)),
+                    ],
+                  ),
+                  Text(
+                    "\n六、如何撥打給警衛？",
+                    style: TextStyle(color: Color(0xff7586F8), fontSize: 16),
+                    textAlign: TextAlign.start,
+                  ),
+                  Row(
+                    children: [
+                      Text("       "),
+                      Flexible(
+                          child: Text(
+                              "於主畫面中按「呼叫警衛」立即ㄧ鍵呼叫。\n如使用者名下多戶，則需選擇為哪一戶別的呼叫來源。以利警衛視回應。",
+                              style: TextStyle(
+                                  color: Color(0xff3D3D3D), fontSize: 14),
+                              textAlign: TextAlign.start)),
+                    ],
+                  ),
+                  Text(
+                    "\n七、如何查詢留言紀錄？",
+                    style: TextStyle(color: Color(0xff7586F8), fontSize: 16),
+                    textAlign: TextAlign.start,
+                  ),
+                  Row(
+                    children: [
+                      Text("       "),
+                      Flexible(
+                          child: Text("於主畫面中按「意見反映」即可得知留言及管委會回覆。",
+                              style: TextStyle(
+                                  color: Color(0xff3D3D3D), fontSize: 14),
+                              textAlign: TextAlign.start)),
+                    ],
+                  ),
+                  Text(
+                    "\n八、如何留言？",
+                    style: TextStyle(color: Color(0xff7586F8), fontSize: 16),
+                    textAlign: TextAlign.start,
+                  ),
+                  Row(
+                    children: [
+                      Text("       "),
+                      Flexible(
+                          child: Text("於主畫面中按「意見反映」之右上角可新增留言(意見)。",
+                              style: TextStyle(
+                                  color: Color(0xff3D3D3D), fontSize: 14),
+                              textAlign: TextAlign.start)),
+                    ],
+                  ),
+                ],
+              ))),
           actions: <Widget>[
             new ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xff7588FA)
-              ),
+              style:
+                  ElevatedButton.styleFrom(backgroundColor: Color(0xff7588FA)),
               onPressed: () {
                 Navigator.of(context).pop();
               },
               child: new Text("確認"),
             ),
-
           ],
         );
       });

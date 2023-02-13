@@ -462,12 +462,12 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
       case CallStateEnum.ACCEPTED:
       case CallStateEnum.CONFIRMED:
         {
-          (advanceActions.add(ActionButton(
+        /*  (advanceActions.add(ActionButton(
             title: _audioMuted ? 'unmute' : 'mute',
             icon: _audioMuted ? Icons.mic_off : Icons.mic,
             checked: _audioMuted,
             onPressed: () => _muteAudio(),
-          )));
+          )));*/
 
           if (voiceOnly) {
             advanceActions.add(ActionButton(

@@ -53,9 +53,12 @@ class _HomeWidget extends State<HomeWidget> {
         automaticallyImplyLeading: false,
         centerTitle: false,
         title: Padding(
-            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-            child: Image.asset(
-              'assets/images/logo.png',
+            padding: EdgeInsets.all(10),
+            child: Container(
+              height: 30,
+              child: Image.asset(
+                'assets/images/logo.png',
+              ),
             )),
         actions: [
           Padding(
@@ -239,8 +242,16 @@ class _HomeWidget extends State<HomeWidget> {
             padding: EdgeInsets.all(8.0),
             color: Color(0xff758AFC),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
+                Expanded(
+                  child: GestureDetector(
+                    child: Text(''),
+                    onTap: () {
+                      showFAQsDialog(context);
+                    },
+                  ),
+                ),
                 Expanded(
                   child: GestureDetector(
                     child: Image.asset(
@@ -251,20 +262,6 @@ class _HomeWidget extends State<HomeWidget> {
                     },
                   ),
                 ),
-                Image.asset(
-                  'assets/images/P17.png',
-                ),
-                /* Expanded(
-                  child: GestureDetector(
-                    child: Image.asset(
-                      'assets/images/P15.png',
-                    ),
-                    onTap: () {
-                      _launchInBrowser(Uri.parse(
-                          "http://www.reddotsolution.com/home/index-5.html"));
-                    },
-                  ),
-                ),*/
                 Image.asset(
                   'assets/images/P17.png',
                 ),

@@ -50,7 +50,7 @@ class _Login extends State<Login> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        child: Text('V1.0.12'),
+        child: Text(APIs().version),
         onPressed: null,
         backgroundColor: Colors.grey,
         shape: RoundedRectangleBorder(
@@ -133,7 +133,6 @@ class _Login extends State<Login> {
                             await prefs.setString("token", info['token']);
                             await loadinfo();
                             Navigator.pushNamed(context, '/');
-
                           } else {
                             loginfailDialog(context, info['message']);
                           }

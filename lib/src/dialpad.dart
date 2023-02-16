@@ -31,11 +31,12 @@ import 'package:firebase_core/firebase_core.dart';
 TextEditingController DomainIP = new TextEditingController();
 dynamic nowwho;
 var iscall = 0;
-String whoscall = "080";
+String whoscall = "000";
+var x = 0;
 
 class DialPadWidget extends StatefulWidget {
   final SIPUAHelper? _helper;
-  final String? get;
+  String? get;
   dynamic profile;
   dynamic info;
   DialPadWidget(this._helper, this.get, this.profile, this.info, {Key? key})
@@ -59,11 +60,6 @@ class _MyDialPadWidget extends State<DialPadWidget>
   late Map<String, dynamic> getsipinfo;
   @override
   initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (get == "1") {
-        showchioceDialog(context);
-      }
-    });
     print("123" + widget.profile.toString());
     super.initState();
     receivedMsg = "";
@@ -71,7 +67,11 @@ class _MyDialPadWidget extends State<DialPadWidget>
     _loadSettings();
     print("cola" + get.toString());
     _firebaseMessaging.subscribeToTopic('all');
-
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (get == "1") {
+        showchioceDialog(context);
+      }
+    });
     /*UaSettings settings = UaSettings();
     settings.webSocketUrl = "ws://pingling.asuscomm.com:8080/ws";
     settings.webSocketSettings.allowBadCertificate = true;
@@ -148,6 +148,7 @@ class _MyDialPadWidget extends State<DialPadWidget>
 
     helper!.call(dest, voiceonly: voiceOnly, mediaStream: mediaStream);
     _preferences.setString('dest', dest);
+
     return null;
   }
 
@@ -380,15 +381,29 @@ class _MyDialPadWidget extends State<DialPadWidget>
 
   @override
   void callStateChanged(Call call, CallState callState) {
+    print("callstate" + callState.state.toString());
     if (callState.state == CallStateEnum.CALL_INITIATION) {
+      // print("myx:" + x.toString());
+      if (x > 0) {
+        return;
+      }
+      x++;
+
       Navigator.pushNamed(context, '/callscreen', arguments: call);
     }
     if (callState.state == CallStateEnum.FAILED) {
+      print("end:");
       FlutterCallkitIncoming.endAllCalls();
 
       _textController?.text = "";
       iscall = 0;
+      x = 0;
+      widget.get = "0";
       Navigator.of(context).pop();
+    }
+    if (callState.state == CallStateEnum.ENDED) {
+      x = 0;
+      widget.get = "0";
     }
   }
 
@@ -430,10 +445,64 @@ class _MyDialPadWidget extends State<DialPadWidget>
         });
   }
 
-  void showchioceDialog(BuildContext context) {
+  void showchioceDialog(BuildContext context) async {
     final size = MediaQuery.of(context).size;
     final width = size.width;
     final height = size.height;
+    if (widget.profile['houses'].length == 1) {
+      UaSettings settings = UaSettings();
+      settings.webSocketUrl = "wss://ip-intercom.reddotsolution.com:4443/ws";
+      settings.webSocketSettings.allowBadCertificate = true;
+      //settings.webSocketSettings.userAgent = 'Dart/2.8 (dart:io) for OpenSIPS.';
+      settings.uri = widget.profile['houses'][0]['sipUserName'] +
+          "@ip-intercom.reddotsolution.com";
+      settings.authorizationUser = widget.profile['houses'][0]['sipUserName'];
+      settings.password = widget.profile['houses'][0]['sipUserPassword'];
+      settings.displayName = widget.profile['houses'][0]['houseName'];
+      settings.userAgent = 'Dart SIP Client v1.0.0';
+      settings.dtmfMode = DtmfMode.RFC2833;
+      print("setting:" + settings.webSocketUrl.toString());
+      helper!.start(settings);
+      print("get:" + widget.get.toString());
+      /*  await Future.delayed(const Duration(seconds: 1));
+
+      if (widget.get.toString() == "1") {
+        print("guard");
+        _textController?.text =
+            widget.profile['houses'][0]['constructionSipUserName'];
+        print("guardcall:" + _textController!.text.toString());
+
+        iscall = 1;
+
+        _handleCall(context);
+        return;
+      } else {
+        print("heree:" + widget.profile['houses'][0]['houseID'].toString());
+        var get = await APIs().startcall(
+            widget.info['token'],
+            widget.profile['houses'][0]['constructionId'],
+            widget.profile['houses'][0]['houseID'],
+            _textController?.text);
+        var respone = json.decode(get);
+        if (respone['code'] != 0) {
+          //   callingDialog();
+          Fluttertoast.showToast(
+              msg: respone['message'],
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              textColor: Colors.white,
+              backgroundColor: Colors.black,
+              fontSize: 16.0);
+        } else {
+          _textController?.text = respone['data']['targetSipName'];
+          iscall = 1;
+          await Future.delayed(const Duration(seconds: 1));
+          _handleCall(context);
+        }
+        return;
+      }*/
+    }
     showDialog(
         context: context,
         builder: (context) {

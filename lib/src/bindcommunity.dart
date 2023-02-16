@@ -1,8 +1,10 @@
 import 'dart:convert';
 
+import 'package:dart_sip_ua_example/main.dart';
 import 'package:dart_sip_ua_example/src/login.dart';
 import 'package:dart_sip_ua_example/src/register.dart';
 import 'package:dart_sip_ua_example/src/sipphone.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
@@ -41,6 +43,14 @@ class _bindcommunity extends State<bindcommunity> {
     final width = size.width;
     final height = size.height;
     return Scaffold(
+        // floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+        floatingActionButton: FloatingActionButton(
+          child: Text(APIs().version),
+          onPressed: null,
+          backgroundColor: Colors.grey,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(14.0))),
+        ),
         backgroundColor: Color(0xffE6E1E0),
         appBar: AppBar(
           iconTheme: IconThemeData(color: Colors.black),
@@ -200,6 +210,15 @@ class _bindcommunity extends State<bindcommunity> {
                 children: [
                   Row(
                     children: [
+                      Text('登入帳號：' +
+                          profile['memberName'] +
+                          "(" +
+                          profile['memberAccount'] +
+                          ")")
+                    ],
+                  ),
+                  Row(
+                    children: [
                       Padding(
                         padding: EdgeInsets.all(10),
                         child: Text("已綁定的住戶:"),
@@ -278,9 +297,48 @@ class _bindcommunity extends State<bindcommunity> {
                       child: Text(
                         "登出帳號",
                         style: TextStyle(color: Color(0xff7587F9)),
-                      ))
+                      )),
+                  ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xffE6E1E0)),
+                      onPressed: () async {
+                        var notify_token;
+                        FirebaseMessaging _firebaseMessaging =
+                            FirebaseMessaging.instance;
+
+                        await _firebaseMessaging.getToken().then((token) {
+                          notify_token = token.toString();
+                          print("token" + token.toString());
+                        });
+                        var re = json.decode(await APIs()
+                            .updateuuid(widget.info['token'], notify_token));
+                        if (re['code'] == 0) {
+                          Fluttertoast.showToast(
+                              msg: "問題排除成功",
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.CENTER,
+                              timeInSecForIosWeb: 1,
+                              textColor: Colors.white,
+                              backgroundColor: Colors.black,
+                              fontSize: 16.0);
+                        } else {
+                          Fluttertoast.showToast(
+                              msg: re['message'],
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.CENTER,
+                              timeInSecForIosWeb: 1,
+                              textColor: Colors.white,
+                              backgroundColor: Colors.black,
+                              fontSize: 16.0);
+                        }
+                      },
+                      child: Text(
+                        "來電問題排除",
+                        style: TextStyle(color: Color(0xff7587F9)),
+                      )),
                 ],
-              )
+              ),
+              Text("")
             ],
           ),
         ));
@@ -346,7 +404,7 @@ class _bindcommunity extends State<bindcommunity> {
                                 backgroundColor: Colors.black,
                                 fontSize: 16.0);
                             Navigator.pop(context);
-                            Navigator.of(context, rootNavigator: true).pop();
+                            Navigator.pushNamed(context, '/login');
                           } else {
                             Fluttertoast.showToast(
                                 msg: info['message'],

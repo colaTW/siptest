@@ -8,7 +8,7 @@ class APIs {
   var path = '/app/api';
   //var url = 'community.edwardforce.tw/api';
 //  var path='api'
-
+  var version = "V1.1.6c";
   getbanner() async {
     var uri = Uri.https(
       'baotai.edwardforce.tw',
@@ -265,6 +265,20 @@ class APIs {
     print("body" + body.toString());
     var uri = Uri.https(url, path + '/member/user/logout');
     var response = await client.post(uri, body: body, headers: params);
+    print("here" + response.body);
+    return (response.body);
+  }
+
+  updateuuid(var tk, var uuid) async {
+    var params = Map<String, String>();
+    params["Authorization"] = ":Bearer " + tk;
+
+    var body = Map<String, String>();
+    body["deviceUuid"] = uuid.toString();
+    var client = http.Client();
+    print("body" + body.toString());
+    var uri = Uri.https(url, path + '/member/user/uuid');
+    var response = await client.put(uri, body: body, headers: params);
     print("here" + response.body);
     return (response.body);
   }

@@ -39,9 +39,9 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("message:" + message.toString());
   print("params:" + params.toString());
   if (params['type'] == "pickUp") {
+    whoscall = params['fromHouseName'] ?? "管理員";
     showCallkitIncoming(Uuid().v4());
 
-    whoscall = params['fromHouseName'];
     UaSettings settings = UaSettings();
     settings.webSocketUrl = "wss://ip-intercom.reddotsolution.com:4443/ws";
     settings.webSocketSettings.allowBadCertificate = true;
@@ -62,6 +62,11 @@ String gowhere = "/home";
 
 Future<void> showCallkitIncoming(String uuid) async {
   print("showCallkitIncoming:");
+  print("callkitParams1:" + uuid.toString());
+  print("callkitParams2:" + whoscall.toString());
+  if (whoscall == null) {
+    whoscall = "管理員";
+  }
   final params = CallKitParams(
     id: uuid,
     nameCaller: whoscall + ' 來電',
@@ -73,6 +78,7 @@ Future<void> showCallkitIncoming(String uuid) async {
     extra: <String, dynamic>{'userId': '1a2b3c4d'},
     headers: <String, dynamic>{'apiKey': 'Abc@123!', 'platform': 'flutter'},
   );
+
   await FlutterCallkitIncoming.showCallkitIncoming(params);
 }
 
@@ -92,9 +98,9 @@ void main() async {
     print("params:" + params.toString());
 
     if (params['type'] == "pickUp") {
+      whoscall = params['fromHouseName'];
       showCallkitIncoming(Uuid().v4());
 
-      whoscall = params['fromHouseName'];
       //getsipinfo = params;
       UaSettings settings = UaSettings();
       settings.webSocketUrl = "wss://ip-intercom.reddotsolution.com:4443/ws";
@@ -183,7 +189,6 @@ class MyApp extends StatelessWidget {
     print("gowhere:" + gowhere);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,

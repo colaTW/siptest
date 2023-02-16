@@ -176,11 +176,14 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
     switch (callState.state) {
       case CallStateEnum.STREAM:
         _handelStreams(callState);
+
         break;
       case CallStateEnum.ENDED:
         x = 0;
         cancelcall = null;
         _backToDialPad();
+        print("有結束了3");
+
         break;
       case CallStateEnum.FAILED:
         print("有結束了2");
@@ -210,9 +213,14 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
   void registrationStateChanged(RegistrationState state) {}
 
   void _cleanUp() {
-    if (_localStream == null) return;
+    call?.session.terminate();
+
+    if (_localStream == null) {
+      return;
+    }
     _localStream?.getTracks().forEach((track) {
       track.stop();
+      _localStream?.removeTrack(track);
     });
     _localStream!.dispose();
     _localStream = null;
@@ -261,13 +269,14 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
         : MediaQuery.of(context).size.height;
   }
 
-  void _handleHangup() {
+  void _handleHangup() async {
     call!.hangup({'status_code': 603});
+    await Future.delayed(const Duration(seconds: 1));
     _timer.cancel();
   }
 
   void _handleAccept() async {
-    FlutterCallkitIncoming.endAllCalls();
+    await FlutterCallkitIncoming.endAllCalls();
 
     bool remoteHasVideo = call!.remote_has_video;
     final mediaConstraints = <String, dynamic>{
@@ -304,7 +313,7 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
     } else {
       call!.mute(true, false);
     }
-    print("_audioMuted"+_audioMuted.toString());
+    print("_audioMuted" + _audioMuted.toString());
   }
 
   void _muteVideo() {
@@ -448,9 +457,12 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
             title: "Accept",
             fillColor: Colors.green,
             icon: Icons.phone,
-            onPressed: () {
+            onPressed: () async {
               x = 1;
               cancelcall = false;
+              await FlutterCallkitIncoming.endAllCalls();
+              await Future.delayed(const Duration(seconds: 2));
+
               _handleAccept();
             },
           ));
@@ -462,7 +474,7 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
       case CallStateEnum.ACCEPTED:
       case CallStateEnum.CONFIRMED:
         {
-        /*  (advanceActions.add(ActionButton(
+          /*  (advanceActions.add(ActionButton(
             title: _audioMuted ? 'unmute' : 'mute',
             icon: _audioMuted ? Icons.mic_off : Icons.mic,
             checked: _audioMuted,
@@ -629,6 +641,7 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
   @override
   Widget build(BuildContext context) {
     print("cola:yesyes");
+    navigator.mediaDevices.enumerateDevices;
     //_toggleSpeaker();
     return Scaffold(
         appBar: AppBar(
